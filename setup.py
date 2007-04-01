@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.10'
+version = '0.1.0'
 
 setup(name='uamobile',
       version=version,
@@ -15,7 +15,13 @@ HTTP-MobileAgent? http://search.cpan.org/~kurihara/HTTP-MobileAgent-0.26/lib/HTT
 
 PEAR::Net_UserAgent_Mobile? http://pear.php.net/package/Net_UserAgent_Mobile
 """,
-      classifiers=[], # Get strings from http://www.python.org/pypi?%3Aaction=list_classifiers
+      classifiers=filter(None, map(str.strip, """\
+Development Status :: 3 - Alpha
+License :: OSI Approved :: MIT License
+Programming Language :: Python
+Topic :: Software Development :: Libraries :: Python Modules
+Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware
+""".splitlines())),
       keywords='',
       author='Chihio Sakatoku',
       author_email='csakatoku@mac.com',
