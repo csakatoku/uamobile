@@ -1,0 +1,17 @@
+README
+setup.cfg
+setup.py
+uamobile/__init__.py
+uamobile/docomo.py
+uamobile/exceptions.py
+uamobile/ezweb.py
+uamobile/nonmobile.py
+uamobile/softbank.py
+uamobile/willcom.py
+uamobile.egg-info/PKG-INFO
+uamobile.egg-info/SOURCES.txt
+uamobile.egg-info/dependency_links.txt
+uamobile.egg-info/entry_points.txt
+uamobile.egg-info/paster_plugins.txt
+uamobile.egg-info/top_level.txt
+uamobile.egg-info/zip-safe
