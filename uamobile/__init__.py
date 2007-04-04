@@ -12,7 +12,7 @@ MOBILE_RE = re.compile(r'(?:(%s)|(%s)|(%s)|(%s))' % (DOCOMO_RE,
                                                      EZWEB_RE,
                                                      WILLCOM_RE))
 
-def detect(request, lazy=False):
+def detect(environ, lazy=False):
     """
     parse HTTP user agent string and detect a mobile device.   
     """
@@ -22,23 +22,24 @@ def detect(request, lazy=False):
     from uamobile.softbank import SoftbankUserAgent
     from uamobile.willcom import WillcomUserAgent
 
-    ua = request.getheader('HTTP_USER_AGENT')
-    sub = 'NonMobile'
+    try:
+        matcher = MOBILE_RE.match(environ['HTTP_USER_AGENT'])
+        if matcher:
+            g = matcher.groups()
 
-    matcher = MOBILE_RE.match(ua)
-    if matcher:
-        g = matcher.groups()
-
-        if g[0]:
-            result = DoCoMoUserAgent(request)
-        elif g[1]:
-            result = SoftbankUserAgent(request)
-        elif g[2]:
-            result = EZwebUserAgent(request)
+            if g[0]:
+                result = DoCoMoUserAgent(environ)
+            elif g[1]:
+                result = SoftbankUserAgent(environ)
+            elif g[2]:
+                result = EZwebUserAgent(environ)
+            else:
+                result = WillcomUserAgent(environ)
         else:
-            result = WillcomUserAgent(request)
-    else:
-        result = NonMobileUserAgent(request)
+            result = NonMobileUserAgent(environ)
+
+    except KeyError:
+        result = NonMobileUserAgent(environ)
 
     # Currently we does not support lazy evaluation.
     try:
