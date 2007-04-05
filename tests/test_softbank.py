@@ -34,14 +34,14 @@ def test_useragent_softbank():
 def test_jphone_2_0():
     ua = detect(Environ('J-PHONE/2.0/J-DN02'))
     assert isinstance(ua.version, basestring)
-    assert not ua.is_3g, 'Invalid generation %s' % ua.is_3g
+    assert not ua.is_3g(), 'Invalid generation'
     assert ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
 
 def test_jphone_3_0():
     ua = detect(Environ('J-PHONE/3.0/J-PE03_a'))
-    assert not ua.is_3g, 'Invalid generation %s' % ua.is_3g
+    assert not ua.is_3g(), 'Invalid generation'
     assert ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
@@ -60,7 +60,7 @@ def test_jphone_5_0():
 
 def test_vodafone_1_0():  
     ua = detect(Environ('Vodafone/1.0/V702NK/NKJ001 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1'))
-    assert ua.is_3g, 'Invalid generation'
+    assert ua.is_3g(), 'Invalid generation'
     assert not ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
