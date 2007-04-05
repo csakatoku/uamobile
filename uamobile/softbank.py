@@ -33,6 +33,42 @@ class SoftBankUserAgent(UserAgent):
     def is_jphone(self):
         return True
 
+    def is_type_c(self):
+        """
+        returns True if the type is C.
+        """
+        if self.is_3g:
+            return False
+
+        if not re.match(r'^[32]\.', self.version):
+            return False
+
+        return True
+
+    def is_type_p(self):
+        """
+        returns True if the type is P.
+        """
+        if self.is_3g:
+            return False
+
+        if not re.match(r'^4\.', self.version):
+            return False
+
+        return True
+
+    def is_type_w(self):
+        """
+        returns True if the type is W.
+        """
+        if self.is_3g:
+            return False
+
+        if not re.match(r'^5\.', self.version):
+            return False
+
+        return True
+
     def parse(self):
         ua = self.useragent.split(' ')
         
@@ -77,7 +113,7 @@ class SoftBankUserAgent(UserAgent):
         self.java_info.update([x.split('/') for x in ua[2:]])
 
     def _parse_jphone(self, ua):
-        self._is_3g = False
+        self.is_3g = False
         if len(ua) > 1:
             # J-PHONE/4.0/J-SH51/SNJSHA3029293 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0
             self.packet_compliant = True

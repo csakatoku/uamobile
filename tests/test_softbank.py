@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from tests import msg, MockWSGIEnviron as Environ
-from uamobile import detect, SoftBank
+from uamobile import detect, exceptions, SoftBank
 
 def test_useragent_softbank():
     def inner(useragent, version, model, packet_compliant,
@@ -31,6 +31,52 @@ def test_useragent_softbank():
     for args in DATA:
         yield ([inner] + list(args))
 
+def test_jphone_2_0():
+    ua = detect(Environ('J-PHONE/2.0/J-DN02'))
+    assert isinstance(ua.version, basestring)
+    assert not ua.is_3g, 'Invalid generation %s' % ua.is_3g
+    assert ua.is_type_c(), 'Invalid type %s' % ua.version
+    assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
+    assert not ua.is_type_w(), 'Invalid type' % ua.version
+
+def test_jphone_3_0():
+    ua = detect(Environ('J-PHONE/3.0/J-PE03_a'))
+    assert not ua.is_3g, 'Invalid generation %s' % ua.is_3g
+    assert ua.is_type_c(), 'Invalid type %s' % ua.version
+    assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
+    assert not ua.is_type_w(), 'Invalid type' % ua.version
+
+def test_jphone_4_0():
+    ua = detect(Environ('J-PHONE/4.0/J-SH51/SNJSHA3029293 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0'))
+    assert not ua.is_type_c(), 'Invalid type %s' % ua.version
+    assert ua.is_type_p(), 'Invalid type %s'  % ua.version
+    assert not ua.is_type_w(), 'Invalid type' % ua.version
+
+def test_jphone_5_0():    
+    ua = detect(Environ('J-PHONE/5.0/V801SA'))
+    assert not ua.is_type_c(), 'Invalid type %s' % ua.version
+    assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
+    assert ua.is_type_w(), 'Invalid type' % ua.version
+
+def test_vodafone_1_0():  
+    ua = detect(Environ('Vodafone/1.0/V702NK/NKJ001 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1'))
+    assert ua.is_3g, 'Invalid generation'
+    assert not ua.is_type_c(), 'Invalid type %s' % ua.version
+    assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
+    assert not ua.is_type_w(), 'Invalid type' % ua.version
+
+def test_error_agents():
+    def tester(useragent):
+        try:
+            ua = detect(Environ(useragent))
+        except exceptions.NoMatchingError:
+            pass
+        else:
+            raise 'NoMatchingError expected'
+    for datum in ERRORS:
+        yield tester, datum
+    
+
 #########################
 # Test data
 #########################
@@ -56,3 +102,6 @@ DATA = (
     ('J-PHONE/3.0/V301T', '3.0', 'V301T', False),
     ('SoftBank/1.0/705P/PJP10 Browser/Teleca-Browser/3.1 Profile/MIDP-2.0 Configuration/CLDC-1.1', '1.0', '705P', True, None, 'P', 'JP10', {'Profile' : 'MIDP-2.0', 'Configuration' : 'CLDC-1.1'}),
 )
+
+ERRORS = ('J-PHONE/4.0/J-SH51_a/ZNJSHA5081372 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0',
+          )
