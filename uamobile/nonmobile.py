@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from uamobile import exceptions, UserAgent
+from uamobile import exceptions
+from uamobile.base import UserAgent
 
 class NonMobileUserAgent(UserAgent):
     name = 'NonMobile'
