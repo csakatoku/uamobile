@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from tests import msg, MockWSGIEnviron as Environ
-from uamobile import detect
+from uamobile import detect, NonMobile
 
 def test_useragent_nonmobile():
     def inner(useragent):
         ua = detect(Environ(useragent))
+        assert isinstance(ua, NonMobile)
         assert ua.carrier == 'NonMobile'
         assert ua.short_carrier == 'N'
         assert ua.is_docomo() == False

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from tests import msg, MockWSGIEnviron as Environ
-from uamobile import detect
+from uamobile import detect, DoCoMo
 
 def test_useragent_docomo():
     def inner(useragent, version, html_version, model, cache_size,
@@ -8,6 +8,7 @@ def test_useragent_docomo():
 
         ua = detect(Environ(useragent))
         assert ua.is_docomo()
+        assert isinstance(ua, DoCoMo)
         assert ua.is_ezweb() == False
         assert ua.is_softbank() == False
         assert ua.is_vodafone() == False

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from tests import msg, MockWSGIEnviron as Environ
-from uamobile import detect
+from uamobile import detect, EZweb
 
 def test_useragent_ezweb():
     def inner(useragent, version, model, device_id, server, xhtml_compliant, comment, is_wap1, is_wap2):
         ua = detect(Environ(useragent))
+        assert isinstance(ua, EZweb)
         assert ua.carrier == 'EZweb'
         assert ua.short_carrier == 'E'
         assert ua.is_docomo() == False

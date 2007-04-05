@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from tests import msg, MockWSGIEnviron as Environ
-from uamobile import detect
+from uamobile import detect, Willcom
 
 def test_useragent():
     def inner(useragent, name, vendor, model, model_version, browser_version, cache_size):
         ua = detect(Environ(useragent))
 
         assert ua.is_willcom()
+        assert isinstance(ua, Willcom)
         assert ua.name == name
         assert ua.carrier == 'WILLCOM'
         assert ua.short_carrier == 'W'
