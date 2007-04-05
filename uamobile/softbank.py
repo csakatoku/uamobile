@@ -9,7 +9,7 @@ MODEL_VERSION_RE = re.compile(r'^([a-z]+)((?:[a-z]|\d){4})$', re.I)
 
 SERIALNUMBER_RE = re.compile(r'^SN(.+)')
 
-class SoftbankUserAgent(UserAgent):
+class SoftBankUserAgent(UserAgent):
     carrier = 'SoftBank'
     short_carrier = 'S'
 

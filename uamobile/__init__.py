@@ -4,7 +4,7 @@ import uamobile.exceptions
 from uamobile.nonmobile import NonMobileUserAgent as NonMobile
 from uamobile.docomo import DoCoMoUserAgent as DoCoMo
 from uamobile.ezweb import EZwebUserAgent as EZweb
-from uamobile.softbank import SoftbankUserAgent as SoftBank
+from uamobile.softbank import SoftBankUserAgent as SoftBank
 from uamobile.willcom import WillcomUserAgent as Willcom
 
 __all__ = ['detect', 'NonMobile', 'DoCoMo', 'EZweb', 'SoftBank', 'Willcom']

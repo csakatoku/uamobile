@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 from tests import msg, MockWSGIEnviron as Environ
-from uamobile import detect
-from uamobile.softbank import SoftbankUserAgent
+from uamobile import detect, SoftBank
 
 def test_useragent_softbank():
     def inner(useragent, version, model, packet_compliant,
               serial_number=None, vendor=None, vendor_version=None, java_infos=None):
         ua = detect(Environ(useragent))
 
-        assert isinstance(ua, SoftbankUserAgent)
+        assert isinstance(ua, SoftBank)
         assert ua.carrier == 'SoftBank'
         assert ua.short_carrier == 'S'
 
