@@ -16,6 +16,7 @@ def test_useragent():
         assert ua.model_version == model_version
         assert ua.browser_version == browser_version
         assert ua.cache_size == cache_size
+        assert ua.display is not None
 
     for args in DATA:
         yield ([inner] + list(args))

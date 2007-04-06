@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
-    
+
 class UserAgent(object):
+    """
+    Base class representing HTTTP user agent.
+    """
+
     def __init__(self, environ):
         self.useragent = environ['HTTP_USER_AGENT']
         self.environ = environ
@@ -84,3 +88,19 @@ class UserAgent(object):
 
     def is_nonmobile(self):
         return False
+
+
+class Display(object):
+    """
+    Display information for mobile devices.
+    """
+
+    def __init__(self, width=None, height=None, depth=None, color=None,
+                 width_bytes=None, height_bytes=None):
+        self.width = width or 0
+        self.height = height or 0
+        self.depth = depth or 0
+        self.color = color or 0
+        self.width_bytes = width_bytes
+        self.height_bytes = height_bytes
+

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from uamobile import exceptions
-from uamobile.base import UserAgent
+from uamobile.base import UserAgent, Display
 
 class NonMobileUserAgent(UserAgent):
     name = 'NonMobile'
@@ -17,4 +17,8 @@ class NonMobileUserAgent(UserAgent):
         pass
 
     def make_display(self):
-        raise NotImplementedError
+        """
+        create a new Display object.
+        """
+        return Display()
+

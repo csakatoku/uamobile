@@ -15,6 +15,7 @@ def test_useragent_nonmobile():
         assert ua.is_jphone() == False
         assert ua.is_willcom() == False
         assert ua.is_nonmobile()
+        assert ua.display is not None
 
     for ua in DATA:
         yield inner, ua

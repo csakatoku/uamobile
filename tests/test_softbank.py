@@ -18,6 +18,7 @@ def test_useragent_softbank():
         assert ua.is_jphone()
         assert ua.is_willcom() == False
         assert ua.is_nonmobile() == False
+        assert ua.display is not None
 
         if serial_number:
             assert ua.serialnumber == serial_number, msg(ua, ua.serialnumber, serial_number)

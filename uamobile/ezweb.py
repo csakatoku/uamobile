@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from uamobile import exceptions
-from uamobile.base import UserAgent
+from uamobile.base import UserAgent, Display
 
 import re
 
@@ -37,14 +37,18 @@ class EZwebUserAgent(UserAgent):
 
         self.model = self.device_id
 
-    def make_display(self):        
-        width, height = self.getheader('HTTP_X_UP_DEVCAP_SCREENPIXELS').split(',')
-        sd = self.get_header('HTTP_X_UP_DEVCAP_SCREENDEPTH').split(',')
-        depth = sd[0] and (2 ** int(sc[0])) or 0
-        color = self.getheader('HTTP_X-UP_DEVCAP_ISCOLOR') == '1'
-
-        #return Display(width=width, height=height, color=color, depth=depth)
-        return None
+    def make_display(self):
+        """
+        create a Display object.
+        """
+        try:
+            width, height = self.environ['HTTP_X_UP_DEVCAP_SCREENPIXELS'].split(',')
+            sd = self.environ['HTTP_X_UP_DEVCAP_SCREENDEPTH'].split(',')
+            depth = sd[0] and (2 ** int(sc[0])) or 0
+            color = self.environ['HTTP_X-UP_DEVCAP_ISCOLOR'] == '1'
+            return Display(width=width, height=height, color=color, depth=depth)
+        except KeyError, ValueError:
+            return Display()
 
     def is_ezweb(self):
         return True

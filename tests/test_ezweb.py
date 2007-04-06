@@ -22,6 +22,7 @@ def test_useragent_ezweb():
         assert ua.is_xhtml_compliant() == xhtml_compliant
         assert ua.is_wap1() == is_wap1
         assert ua.is_wap2() == is_wap2
+        assert ua.display is not None
 
     for args in DATA:
         yield ([inner] + list(args))

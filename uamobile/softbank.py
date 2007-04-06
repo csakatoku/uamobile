@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from uamobile import exceptions
-from uamobile.base import UserAgent
+from uamobile.base import UserAgent, Display
 import re
 
 CARRIER_RE = re.compile(r'^(?:(SoftBank|Vodafone|J-PHONE)/\d\.\d|MOT-)')
@@ -85,7 +85,14 @@ class SoftBankUserAgent(UserAgent):
         self.msname = self.getheader('x-jphone-msname')
 
     def make_display(self):
-        pass
+        """
+        create a new Display object.
+        """       
+        # In PHP version(Net_UserAgent_Mobile), SoftBankUserAgent doesn't
+        # implemented this method. I'm not sure what should we do, but
+        # I assume returning a Display object with no initial values is
+        # a better implementation.
+        return Display()
 
     def _parse_vodaphone(self, ua):
         self.packet_compliant = True

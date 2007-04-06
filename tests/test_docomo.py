@@ -22,6 +22,7 @@ def test_useragent_docomo():
         assert ua.is_foma() == is_foma, (ua, is_foma)
         assert ua.vendor == vendor, (ua, vendor)
         assert ua.series == series, msg(ua, ua.series, series)
+        assert ua.display is not None
 
         if options:
             for k, v in options.items():

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from uamobile import exceptions
-from uamobile.base import UserAgent
+from uamobile.base import UserAgent, Display
 import re
 
 class WillcomUserAgent(UserAgent):
@@ -34,7 +34,10 @@ class WillcomUserAgent(UserAgent):
         self.cache_size = int(matcher.group(1))
 
     def make_display(self):
-        pass
+        """
+        create a new Display object.
+        """
+        return Display()
 
     def is_willcom(self):
         return True
