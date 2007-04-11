@@ -17,6 +17,8 @@ def test_useragent_nonmobile():
         assert ua.is_nonmobile()
         assert ua.display is not None
         assert ua.is_cookie_available() == True
+
+        assert ua.serialnumber is None
         
     for ua in DATA:
         yield inner, ua

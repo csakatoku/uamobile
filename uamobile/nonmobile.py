@@ -25,3 +25,4 @@ class NonMobileUserAgent(UserAgent):
         """
         return Display()
 
+    serialnumber = property(lambda _: None)
