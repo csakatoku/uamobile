@@ -24,6 +24,8 @@ def test_useragent_ezweb():
         assert ua.is_wap2() == is_wap2
         assert ua.display is not None
 
+        assert ua.is_cookie_available() == True
+        
     for args in DATA:
         yield ([inner] + list(args))
 

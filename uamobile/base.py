@@ -76,7 +76,7 @@ class UserAgent(object):
 
     def is_airhphone(self):
         """
-        returns True if the agent is AirH"PHONE.
+        returns True if the agent is AirH'PHONE.
         """
         return False
 
@@ -88,6 +88,12 @@ class UserAgent(object):
 
     def is_nonmobile(self):
         return False
+
+    def is_cookie_available(self):
+        """
+        returns True if the agent supports HTTP cookie.
+        """
+        raise NotImplementedError
 
 
 class Display(object):

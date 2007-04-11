@@ -19,6 +19,9 @@ class EZwebUserAgent(UserAgent):
         self.device_id = ''
         self.server = ''
 
+    def is_cookie_available(self):
+        return True
+
     def parse(self):
         matcher = self._KDDI_RE.match(self.useragent)
         if matcher:

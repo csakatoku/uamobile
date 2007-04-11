@@ -119,6 +119,9 @@ class DoCoMoUserAgent(UserAgent):
     def is_foma(self):
         return self._is_foma
 
+    def is_cookie_available(self):
+        return False
+
     def make_display(self):
         """
         create a new Display object.
@@ -380,7 +383,7 @@ _DEFAULT_DISPLAY_MAP_DATA = """<?xml version="1.0" ?>
   <SO502IWM color="1" depth="256" height="113" width="120" />
   <SO503I color="1" depth="65536" height="113" width="120" />
   <SO503IS color="1" depth="65536" height="113" width="120" />
-  <SO504I color="1" depth="65536" height="112" width="120" />
+p  <SO504I color="1" depth="65536" height="112" width="120" />
   <SO505I color="1" depth="262144" height="240" width="256" />
   <SO505IS color="1" depth="262144" height="256" width="240" />
   <SO506I color="1" depth="262144" height="256" width="240" />

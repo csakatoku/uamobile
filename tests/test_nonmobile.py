@@ -16,7 +16,8 @@ def test_useragent_nonmobile():
         assert ua.is_willcom() == False
         assert ua.is_nonmobile()
         assert ua.display is not None
-
+        assert ua.is_cookie_available() == True
+        
     for ua in DATA:
         yield inner, ua
 

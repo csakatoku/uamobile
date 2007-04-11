@@ -20,6 +20,8 @@ def test_useragent_softbank():
         assert ua.is_nonmobile() == False
         assert ua.display is not None
 
+        assert ua.is_cookie_available() == False
+        
         if serial_number:
             assert ua.serialnumber == serial_number, msg(ua, ua.serialnumber, serial_number)
             assert ua.version == version

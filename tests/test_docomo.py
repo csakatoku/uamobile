@@ -15,7 +15,7 @@ def test_useragent_docomo():
         assert ua.is_jphone() == False
         assert ua.is_willcom() == False
         assert ua.is_nonmobile() == False, ua
-
+        
         assert ua.html_version == html_version, msg(ua, ua.html_version, html_version)
         assert ua.model == model, (ua, model)
         assert ua.cache_size == cache_size, (ua, cache_size)
@@ -24,6 +24,8 @@ def test_useragent_docomo():
         assert ua.series == series, msg(ua, ua.series, series)
         assert ua.display is not None
 
+        assert ua.is_cookie_available() == False
+        
         if options:
             for k, v in options.items():
                 if k == 'status':

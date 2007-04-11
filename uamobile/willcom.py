@@ -16,6 +16,11 @@ class WillcomUserAgent(UserAgent):
         self.browser_version = ''
         self.cache_size = None
 
+    def is_cookie_available(self):
+        # TODO
+        # I'm not sure All WILLCOM phones can handle HTTP cookie.
+        return True
+
     def parse(self):      
         matcher = re.match(r'^Mozilla/3\.0\((?:DDIPOCKET|WILLCOM);(.*)\)', self.useragent)
         if not matcher:

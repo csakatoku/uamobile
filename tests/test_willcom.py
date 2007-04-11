@@ -17,6 +17,8 @@ def test_useragent():
         assert ua.browser_version == browser_version
         assert ua.cache_size == cache_size
         assert ua.display is not None
+        
+        assert ua.is_cookie_available() == True
 
     for args in DATA:
         yield ([inner] + list(args))
