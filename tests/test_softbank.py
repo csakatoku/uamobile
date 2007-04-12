@@ -19,9 +19,7 @@ def test_useragent_softbank():
         assert ua.is_willcom() == False
         assert ua.is_nonmobile() == False
         assert ua.display is not None
-
-        assert ua.is_cookie_available() == False
-        
+       
         if serial_number:
             assert ua.serialnumber == serial_number, msg(ua, ua.serialnumber, serial_number)
             assert ua.version == version
@@ -41,6 +39,7 @@ def test_jphone_2_0():
     assert ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
+    assert ua.is_cookie_available() == False
 
 def test_jphone_3_0():
     ua = detect(Environ('J-PHONE/3.0/J-PE03_a'))
@@ -48,18 +47,21 @@ def test_jphone_3_0():
     assert ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
+    assert ua.is_cookie_available() == False
 
 def test_jphone_4_0():
     ua = detect(Environ('J-PHONE/4.0/J-SH51/SNJSHA3029293 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0'))
     assert not ua.is_type_c(), 'Invalid type %s' % ua.version
     assert ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
+    assert ua.is_cookie_available() == False    
 
 def test_jphone_5_0():    
     ua = detect(Environ('J-PHONE/5.0/V801SA'))
     assert not ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert ua.is_type_w(), 'Invalid type' % ua.version
+    assert ua.is_cookie_available() == True    
 
 def test_vodafone_1_0():  
     ua = detect(Environ('Vodafone/1.0/V702NK/NKJ001 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1'))
@@ -67,6 +69,7 @@ def test_vodafone_1_0():
     assert not ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
+    assert ua.is_cookie_available() == True
 
 def test_error_agents():
     def tester(useragent):
