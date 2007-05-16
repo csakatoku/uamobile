@@ -90,17 +90,33 @@ class SoftBankUserAgent(UserAgent):
           'J-PHONE'  : self._parse_jphone,
           'Motorola' : self._parse_motorola }[carrier](ua)
 
-        self.msname = self.getheader('x-jphone-msname')
+        self.msname = self.getheader('HTTP_X_JPHONE_MSNAME')
 
     def make_display(self):
         """
         create a new Display object.
         """       
-        # In PHP version(Net_UserAgent_Mobile), SoftBankUserAgent doesn't
-        # implemented this method. I'm not sure what should we do, but
-        # I assume returning a Display object with no initial values is
-        # a better implementation.
-        return Display()
+        try:
+            display = self.environ['HTTP_X_JPHONE_DISPLAY']            
+            width, height = map(int, display.split('*'))
+        except (KeyError, ValueError):
+            return Display()
+
+        color = False
+        depth = 0
+        try:
+            color_string = self.environ['HTTP_X_JPHONE_COLOR']
+            matcher = re.match(r'^([CG])(\d+)$', color_string)
+            if matcher:
+                color = (matcher.group(1) == 'C')
+                try:
+                    depth = int(matcher.group(2))
+                except ValueError:
+                    pass
+        except KeyError:
+            pass
+
+        return Display(width=width, height=height, color=color, depth=depth)
 
     def _parse_vodaphone(self, ua):
         self.packet_compliant = True

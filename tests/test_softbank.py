@@ -2,6 +2,23 @@
 from tests import msg, MockWSGIEnviron as Environ
 from uamobile import detect, exceptions, SoftBank
 
+def test_display():
+    env = {'HTTP_USER_AGENT': 'Vodafone/1.0/V904SH/SHJ003/SN000000000000000 Browser/VF-NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1',
+           'HTTP_X_JPHONE_MSNAME': 'V904SH',
+           'HTTP_X_JPHONE_COLOR': 'C262144',
+           'HTTP_X_SSL': 'off',
+           'HTTP_X_JPHONE_REGION': '44020',
+           'HTTP_X_JPHONE_DISPLAY': '480*640',
+           'HTTP_X_JPHONE_UID': 'xxxxxxxxxxxxxxxx',
+           'HTTP_X_JPHONE_SMAF': '128/pcm/grf/rs',
+           'HTTP_X_WAP_PROFILE': 'http://www.sharp-mobile.com/UAProf/V904SH_SHJ001_3g.xml'
+           }
+    ua = detect(env)
+    assert ua.display.width == 480
+    assert ua.display.height == 640
+    assert ua.display.color == True
+    assert ua.display.depth == 262144, "%s expected, result %r" % (262144, ua.display.color)
+
 def test_useragent_softbank():
     def inner(useragent, version, model, packet_compliant,
               serial_number=None, vendor=None, vendor_version=None, java_infos=None):

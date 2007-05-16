@@ -45,10 +45,10 @@ class EZwebUserAgent(UserAgent):
         create a Display object.
         """
         try:
-            width, height = self.environ['HTTP_X_UP_DEVCAP_SCREENPIXELS'].split(',')
+            width, height = map(int, self.environ['HTTP_X_UP_DEVCAP_SCREENPIXELS'].split(','))
             sd = self.environ['HTTP_X_UP_DEVCAP_SCREENDEPTH'].split(',')
-            depth = sd[0] and (2 ** int(sc[0])) or 0
-            color = self.environ['HTTP_X-UP_DEVCAP_ISCOLOR'] == '1'
+            depth = sd[0] and (2 ** int(sd[0])) or 0
+            color = self.environ['HTTP_X_UP_DEVCAP_ISCOLOR'] == '1'
             return Display(width=width, height=height, color=color, depth=depth)
         except KeyError, ValueError:
             return Display()

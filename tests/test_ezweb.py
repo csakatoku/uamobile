@@ -2,6 +2,27 @@
 from tests import msg, MockWSGIEnviron as Environ
 from uamobile import detect, EZweb
 
+def test_display():
+    env = {'HTTP_USER_AGENT': 'KDDI-SA35 UP.Browser/6.2.0.9.1 (GUI) MMP/2.0',
+           'HTTP_X_UP_DEVCAP_MAX_PDU': '131072',
+           'HTTP_X_UP_DEVCAP_MULTIMEDIA': '9300941123301120',
+           'HTTP_X_UP_DEVCAP_SCREENPIXELS': '240,268',
+           'HTTP_X_SSL': 'off',
+           'HTTP_X_UP_DEVCAP_SOFTKEYSIZE': '6',
+           'HTTP_X_UP_DEVCAP_SCREENDEPTH': '16,RGB565',
+           'HTTP_X_UP_DEVCAP_NUMSOFTKEYS': '2',
+           'HTTP_X_UP_PROXY_BA_REALM': 'realm',
+           'HTTP_X_UP_DEVCAP_QVGA': '1',
+           'HTTP_X_UP_DEVCAP_SCREENCHARS': '23,12',
+           'HTTP_X_UP_DEVCAP_CC': '1',
+           'HTTP_X_UP_DEVCAP_TITLEBAR': '1',
+           'HTTP_X_UP_DEVCAP_ISCOLOR': '1',
+           'HTTP_X_UP_SUBNO': '00000000000000_ef.ezweb.ne.jp' }
+    ua = detect(env)
+    assert ua.display.width == 240, "%s expected, result %r" % (240, ua.display.width)
+    assert ua.display.height == 268, "%s expected, result %r" % (268, ua.display.height)
+    assert ua.display.color == True
+    
 def test_useragent_ezweb():
     def inner(useragent, version, model, device_id, server, xhtml_compliant, comment, is_wap1, is_wap2):
         ua = detect(Environ(useragent))
