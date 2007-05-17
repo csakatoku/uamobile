@@ -18,6 +18,8 @@ def test_display():
     assert ua.display.height == 640
     assert ua.display.color == True
     assert ua.display.depth == 262144, "%s expected, result %r" % (262144, ua.display.color)
+    assert ua.display.is_qvga() == True
+    assert ua.display.is_vga() == True
 
 def test_useragent_softbank():
     def inner(useragent, version, model, packet_compliant,

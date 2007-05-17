@@ -110,3 +110,8 @@ class Display(object):
         self.width_bytes = width_bytes
         self.height_bytes = height_bytes
 
+    def is_qvga(self):
+        return self.width >= 240
+
+    def is_vga(self):
+        return self.width >= 480

@@ -22,6 +22,8 @@ def test_display():
     assert ua.display.width == 240, "%s expected, result %r" % (240, ua.display.width)
     assert ua.display.height == 268, "%s expected, result %r" % (268, ua.display.height)
     assert ua.display.color == True
+    assert ua.display.is_vga() == False
+    assert ua.display.is_qvga() == True
     
 def test_useragent_ezweb():
     def inner(useragent, version, model, device_id, server, xhtml_compliant, comment, is_wap1, is_wap2):
