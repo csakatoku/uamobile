@@ -80,6 +80,18 @@ class SoftBankUserAgent(UserAgent):
 
         return True
 
+    def get_jphone_uid(self):
+        """
+        returns the x-jphone-uid
+        for the information about x-jphone-uid, see
+        http://developers.softbankmobile.co.jp/dp/tool_dl/web/tech.php
+        """
+        try:
+            return self.environ['HTTP_X_JPHONE_UID']
+        except KeyError:
+            return None
+    jphone_uid = property(get_jphone_uid)
+
     def parse(self):
         ua = self.useragent.split(' ')
         

@@ -21,6 +21,15 @@ def test_display():
     assert ua.display.is_qvga() == True
     assert ua.display.is_vga() == True
 
+def test_jphone_uid():
+    useragent = 'Vodafone/1.0/V904SH/SHJ003/SN000000000000000 Browser/VF-NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1'
+    ua = detect({'HTTP_USER_AGENT': useragent,
+                 'HTTP_X_JPHONE_UID': 'xxxxxxxxxxxxxxxx' })
+    assert ua.jphone_uid == 'xxxxxxxxxxxxxxxx'
+
+    ua = detect({'HTTP_USER_AGENT': useragent })
+    assert ua.jphone_uid is None
+
 def test_useragent_softbank():
     def inner(useragent, version, model, packet_compliant,
               serial_number=None, vendor=None, vendor_version=None, java_infos=None):
