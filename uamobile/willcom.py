@@ -16,6 +16,10 @@ class WillcomUserAgent(UserAgent):
         self.browser_version = ''
         self.cache_size = None
 
+        # WILLCOM does not support the serial number of a device
+        # except official web sites?
+        self.serialnumber = None        
+
     def is_cookie_available(self):
         # TODO
         # I'm not sure All WILLCOM phones can handle HTTP cookie.
