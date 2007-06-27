@@ -6,7 +6,10 @@ class UserAgent(object):
     """
 
     def __init__(self, environ):
-        self.useragent = environ['HTTP_USER_AGENT']
+        try:
+            self.useragent = environ['HTTP_USER_AGENT']
+        except KeyError, e:
+            self.useragent = ''
         self.environ = environ
         self.version = ''
 

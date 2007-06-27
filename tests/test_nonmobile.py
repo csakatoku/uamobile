@@ -2,6 +2,14 @@
 from tests import msg, MockWSGIEnviron as Environ
 from uamobile import detect, NonMobile
 
+def test_empty_useragent():
+    try:
+        ua = detect({})
+    except:
+        assert False, 'KeyError HTTP_USER_AGENT should be ignored silently'
+    else:
+        pass
+
 def test_useragent_nonmobile():
     def inner(useragent):
         ua = detect(Environ(useragent))
