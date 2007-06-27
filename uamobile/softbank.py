@@ -149,6 +149,9 @@ class SoftBankUserAgent(UserAgent):
                 raise exceptions.NoMatchingError(self)
             self.serialnumber = matcher.group(1)
 
+        if not model_version:
+            raise exceptions.NoMatchingError(self)
+
         matcher = MODEL_VERSION_RE.match(model_version)
         if not matcher:
             raise exceptions.NoMatchingError(self)

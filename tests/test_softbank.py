@@ -138,4 +138,5 @@ DATA = (
 )
 
 ERRORS = ('J-PHONE/4.0/J-SH51_a/ZNJSHA5081372 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0',
+          'Vodafone/1.0/V702NK'
           )
