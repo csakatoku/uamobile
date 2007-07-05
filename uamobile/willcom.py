@@ -25,7 +25,10 @@ class WillcomUserAgent(UserAgent):
         # I'm not sure All WILLCOM phones can handle HTTP cookie.
         return True
 
-    def parse(self):      
+    def parse(self):
+        if self.useragent.startswith('Mozilla/4.0'):
+            return self._parse_windows_ce()
+
         matcher = re.match(r'^Mozilla/3\.0\((?:DDIPOCKET|WILLCOM);(.*)\)', self.useragent)
         if not matcher:
             raise exceptions.NoMatchingError(self)
@@ -41,6 +44,18 @@ class WillcomUserAgent(UserAgent):
             raise NoMatchingError(self)
 
         self.cache_size = int(matcher.group(1))
+
+    def _parse_windows_ce(self):
+        #Mozilla/4.0 (compatible; MSIE 4.01; Windows CE; SHARP/WS007SH; PPC; 480x640)
+        matcher = re.match(r'^Mozilla/4\.0 \((.*)\)', self.useragent)
+        if not matcher:
+            raise exceptions.NoMatchingError(self)
+
+        try:
+            xx, ie, xxx, vendor_and_model, xxxx, width_and_height = matcher.group(1).split(';')
+            self.vendor, self.model = vendor_and_model.strip().split('/')
+        except ValueError, e:
+            raise exceptions.NoMatchingError(self)
 
     def make_display(self):
         """

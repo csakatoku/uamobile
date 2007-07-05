@@ -19,12 +19,15 @@ MOBILE_RE = re.compile(r'(?:(%s)|(%s)|(%s)|(%s))' % (DOCOMO_RE,
                                                      EZWEB_RE,
                                                      WILLCOM_RE))
 
+WILLCOM_WZERO3_RE = re.compile(r'^Mozilla/4\.0 \(compatible; MSIE (?:6\.0|4\.01); Windows CE; SHARP/WS\d+SH; PPC; \d+x\d+\)')
+
 def detect(environ, lazy=False):
     """
     parse HTTP user agent string and detect a mobile device.   
     """
     try:
-        matcher = MOBILE_RE.match(environ['HTTP_USER_AGENT'])
+        useragent = environ['HTTP_USER_AGENT']
+        matcher = MOBILE_RE.match(useragent)
         if matcher:
             g = matcher.groups()
             if g[0]:
@@ -36,7 +39,10 @@ def detect(environ, lazy=False):
             else:
                 result = Willcom(environ)
         else:
-            result = NonMobile(environ)
+            if WILLCOM_WZERO3_RE.match(useragent):
+                result = Willcom(environ)
+            else:
+                result = NonMobile(environ)
 
     except KeyError:
         result = NonMobile(environ)
