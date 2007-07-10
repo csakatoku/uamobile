@@ -26,8 +26,11 @@ class EZwebUserAgent(UserAgent):
         matcher = self._KDDI_RE.match(self.useragent)
         if matcher:
             # KDDI-TS21 UP.Browser/6.0.2.276 (GUI) MMP/1.1
+            # KDDI-TS3A UP.Browser/6.2.0.11.2.1 (GUI) MMP/2.0, Mozilla/4.08 (MobilePhone; NMCS/3.3) NetFront/3.3
             self.xhtml_compliant = True
-            self.device_id, browser, opt, self.server = matcher.group(1).split(' ', 4)
+            self.device_id, browser, opt, self.server = matcher.group(1).split(' ', 4)[:4]
+            if self.server.endswith(','):
+                self.server = self.server[:-1]
             self._name, version = browser.split('/')
             self.version = '%s %s' % (version, opt)
         else:
