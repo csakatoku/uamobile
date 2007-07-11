@@ -99,6 +99,15 @@ def test_vodafone_1_0():
     assert not ua.is_type_w(), 'Invalid type' % ua.version
     assert ua.is_cookie_available() == True
 
+def test_yahoo_crawler():
+    ua = detect({'HTTP_USER_AGENT':'J-PHONE/2.0/J-SH03 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)'})
+    assert ua.is_softbank()
+    assert not ua.is_3g(), 'Invalid generation'
+    assert ua.is_type_c(), 'Invalid type %s' % ua.version
+    assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
+    assert not ua.is_type_w(), 'Invalid type' % ua.version
+    assert ua.is_cookie_available() == False
+
 def test_error_agents():
     def tester(useragent):
         try:

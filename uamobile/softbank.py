@@ -163,7 +163,7 @@ class SoftBankUserAgent(UserAgent):
 
     def _parse_jphone(self, ua):
         self._is_3g = False
-        if len(ua) > 1:
+        if len(ua) > 1 and not ua[1].startswith('('):
             # J-PHONE/4.0/J-SH51/SNJSHA3029293 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0
             self.packet_compliant = True
             (self.name,
@@ -176,10 +176,14 @@ class SoftBankUserAgent(UserAgent):
                     raise exceptions.NoMatchingError(self)
                 self.serialnumber = matcher.group(1)
 
-            self.vendor, self.vendor_version = ua[1].split('/')
+            try:
+                self.vendor, self.vendor_version = ua[1].split('/')
+            except ValueError, e:
+                raise ValueError(str(ua))
             self.java_info.update([x.split('/') for x in ua[2:]])            
         else:
             # J-PHONE/2.0/J-DN02
+            # J-PHONE/2.0/J-SH03 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)
             self.name, self.version, self.model = ua[0].split('/')
             if self.model:
                 matcher = re.match(r'V\d+([A-Z]+)', self.model)
