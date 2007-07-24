@@ -8,6 +8,9 @@ CARRIER_RE = re.compile(r'^(?:(SoftBank|Vodafone|J-PHONE)/\d\.\d|MOT-)')
 MODEL_VERSION_RE = re.compile(r'^([a-z]+)((?:[a-z]|\d){4})$', re.I)
 
 SERIALNUMBER_RE = re.compile(r'^SN(.+)')
+VODAFONE_VENDOR_RE = re.compile(r'V\d+([A-Z]+)')
+JPHONE_VENDOR_RE = re.compile(r'J-([A-Z]+)')
+JPHONE_COLOR_RE = re.compile(r'^([CG])(\d+)$')
 
 class SoftBankUserAgent(UserAgent):
     carrier = 'SoftBank'
@@ -48,37 +51,19 @@ class SoftBankUserAgent(UserAgent):
         """
         returns True if the type is C.
         """
-        if self._is_3g:
-            return False
-
-        if not re.match(r'^[32]\.', self.version):
-            return False
-
-        return True
+        return not self._is_3g and (self.version.startswith('3.') or self.version.startswith('2.'))
 
     def is_type_p(self):
         """
         returns True if the type is P.
         """
-        if self._is_3g:
-            return False
-
-        if not re.match(r'^4\.', self.version):
-            return False
-
-        return True
+        return not self._is_3g and self.version.startswith('4.')
 
     def is_type_w(self):
         """
         returns True if the type is W.
         """
-        if self._is_3g:
-            return False
-
-        if not re.match(r'^5\.', self.version):
-            return False
-
-        return True
+        return not self._is_3g and self.version.startswith('5.')
 
     def get_jphone_uid(self):
         """
@@ -118,7 +103,7 @@ class SoftBankUserAgent(UserAgent):
         depth = 0
         try:
             color_string = self.environ['HTTP_X_JPHONE_COLOR']
-            matcher = re.match(r'^([CG])(\d+)$', color_string)
+            matcher = JPHONE_COLOR_RE.match(color_string)
             if matcher:
                 color = (matcher.group(1) == 'C')
                 try:
@@ -186,11 +171,11 @@ class SoftBankUserAgent(UserAgent):
             # J-PHONE/2.0/J-SH03 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)
             self.name, self.version, self.model = ua[0].split('/')
             if self.model:
-                matcher = re.match(r'V\d+([A-Z]+)', self.model)
+                matcher = VODAFONE_VENDOR_RE.match(self.model)
                 if matcher:
                     self.vendor = matcher.group(1)
                 else:
-                    matcher = re.match(r'J-([A-Z]+)', self.model)
+                    matcher = JPHONE_VENDOR_RE.match(self.model)
                     if matcher:
                         self.vendor = matcher.group(1)
 
