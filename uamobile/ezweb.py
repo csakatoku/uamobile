@@ -4,12 +4,12 @@ from uamobile.base import UserAgent, Display
 
 import re
 
+KDDI_RE = re.compile(r'^KDDI-(.*)')
+UP_BROWSER_COMMENT_RE = re.compile('^\((.*)\)$')
+
 class EZwebUserAgent(UserAgent):
     carrier = 'EZweb'
     short_carrier = 'E'
-
-    _KDDI_RE = re.compile(r'^KDDI-(.*)')
-    _UP_BROWSER_COMMENT_RE = re.compile('^\((.*)\)$')
 
     def __init__(self, *args, **kwds):
         UserAgent.__init__(self, *args, **kwds)
@@ -23,7 +23,7 @@ class EZwebUserAgent(UserAgent):
         return True
 
     def parse(self):
-        matcher = self._KDDI_RE.match(self.useragent)
+        matcher = KDDI_RE.match(self.useragent)
         if matcher:
             # KDDI-TS21 UP.Browser/6.0.2.276 (GUI) MMP/1.1
             # KDDI-TS3A UP.Browser/6.2.0.11.2.1 (GUI) MMP/2.0, Mozilla/4.08 (MobilePhone; NMCS/3.3) NetFront/3.3
@@ -39,7 +39,7 @@ class EZwebUserAgent(UserAgent):
             self._name, software = browser.split('/')
             self.version, self.device_id = software.split('-')
             if comment:
-                self._comment = self._UP_BROWSER_COMMENT_RE.sub(r'\1', comment)
+                self._comment = UP_BROWSER_COMMENT_RE.sub(r'\1', comment)
 
         self.model = self.device_id
 
@@ -53,7 +53,7 @@ class EZwebUserAgent(UserAgent):
             depth = sd[0] and (2 ** int(sd[0])) or 0
             color = self.environ['HTTP_X_UP_DEVCAP_ISCOLOR'] == '1'
             return Display(width=width, height=height, color=color, depth=depth)
-        except KeyError, ValueError:
+        except (KeyError, ValueError), e:
             return Display()
 
     def is_ezweb(self):

@@ -3,6 +3,10 @@ from uamobile import exceptions
 from uamobile.base import UserAgent, Display
 import re
 
+WILLCOM_RE = re.compile(r'^Mozilla/3\.0\((?:DDIPOCKET|WILLCOM);(.*)\)')
+CACHE_RE = re.compile(r'^[Cc](\d+)')
+WINDOWS_CE_RE = re.compile(r'^Mozilla/4\.0 \((.*)\)')
+
 class WillcomUserAgent(UserAgent):
     name = 'WILLCOM'
     carrier = 'WILLCOM'
@@ -29,7 +33,7 @@ class WillcomUserAgent(UserAgent):
         if self.useragent.startswith('Mozilla/4.0'):
             return self._parse_windows_ce()
 
-        matcher = re.match(r'^Mozilla/3\.0\((?:DDIPOCKET|WILLCOM);(.*)\)', self.useragent)
+        matcher = WILLCOM_RE.match(self.useragent)
         if not matcher:
             raise exceptions.NoMatchingError(self)
 
@@ -38,8 +42,8 @@ class WillcomUserAgent(UserAgent):
          self.model_version,
          self.browser_version,
          cache) = matcher.group(1).split('/')
-            
-        matcher = re.match(r'^[Cc](\d+)', cache)
+        
+        matcher = CACHE_RE.match(cache)
         if not matcher:
             raise NoMatchingError(self)
 
@@ -47,7 +51,7 @@ class WillcomUserAgent(UserAgent):
 
     def _parse_windows_ce(self):
         #Mozilla/4.0 (compatible; MSIE 4.01; Windows CE; SHARP/WS007SH; PPC; 480x640)
-        matcher = re.match(r'^Mozilla/4\.0 \((.*)\)', self.useragent)
+        matcher = WINDOWS_CE_RE.match(self.useragent)
         if not matcher:
             raise exceptions.NoMatchingError(self)
 

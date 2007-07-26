@@ -14,8 +14,23 @@ except ImportError:
         from ElementTree import iterparse
 
 COMMENT_RE = re.compile(r'^\((.*)\)$')
-
 CACHE_RE = re.compile(r'^c(\d+)')
+
+SERIALNUMBER_RE = re.compile(r'^ser(\w{11})$')
+STATUS_RE = re.compile(r'^(T[CDBJ])$')
+BANDWIDTH_RE = re.compile(r'^s(\d+)$')
+DISPLAY_BITES_RE = re.compile(r'^W(\d+)H(\d+)$')
+VENDOR_RE = re.compile(r'([A-Z]+)\d')
+
+FOMA_PARAMS_START_RE = re.compile(r'^([^(]+)')
+FOMA_PARAMS_RE = re.compile(r'^[^(]+\((.*?)\)$')
+FOMA_CACHE_RE = re.compile(r'^c(\d+)$')
+FOMA_SERIALNUMBER_RE = re.compile(r'^ser(\w{15})$')
+FOMA_STATUS_RE = re.compile(r'^(T[CDBJ])$')
+FOMA_CARDID_RE = re.compile(r'^icc(\w{20})?$')
+FOMA_DISPLAY_BYTES_RE = re.compile(r'^W(\d+)H(\d+)$')
+FOMA_SERIES_4DIGITS_RE = re.compile(r'(\d{4})')
+FOMA_SERIES_3DIGITS_RE = re.compile(r'(\d{3}i)')
 
 class DoCoMoUserAgent(UserAgent):
     """
@@ -77,7 +92,7 @@ class DoCoMoUserAgent(UserAgent):
         returns vender code like 'SO' for Sony.
         if unkwon, returns None
         """
-        matcher = re.match(r'([A-Z]+)\d', self.model)
+        matcher = VENDOR_RE.match(self.model)
         if matcher:
             return matcher.group(1)
         else:
@@ -89,10 +104,10 @@ class DoCoMoUserAgent(UserAgent):
         returns series name like '502i'.
         if unknow, return None.
         """
-        if self._is_foma and re.search(r'(\d{4})', self.model):
+        if self._is_foma and FOMA_SERIES_4DIGITS_RE.search(self.model):
             return 'FOMA'
     
-        matcher = re.search(r'(\d{3}i)', self.model)
+        matcher = FOMA_SERIES_3DIGITS_RE.search(self.model)
         if matcher:
             return matcher.group(1)
 
@@ -164,26 +179,28 @@ class DoCoMoUserAgent(UserAgent):
 
         if rest:
             for value in rest.split('/'):
-                matcher = re.match(r'^ser(\w{11})$', value)
+                matcher = SERIALNUMBER_RE.match(value)
                 if matcher:
                     self.serialnumber = matcher.group(1)
                     continue
-
-                matcher = re.match(r'^(T[CDBJ])$', value)
-                if matcher:
-                    self._status = matcher.group(1)
-
-                matcher = re.match(r'^s(\d+)$', value)
+                
+                matcher = BANDWIDTH_RE.match(value)
                 if matcher:
                     self.bandwidth = int(matcher.group(1))
+                    continue
 
-                matcher = re.match(r'^W(\d+)H(\d+)$', value)
+                matcher = STATUS_RE.match(value)
+                if matcher:
+                    self._status = matcher.group(1)
+                    continue
+
+                matcher = DISPLAY_BITES_RE.match(value)
                 if matcher:
                     self._display_bytes = '%s*%s' % (matcher.group(1),
                                                      matcher.group(2))
 
     def _parse_foma(self, foma):
-        matcher = re.match(r'^([^(]+)', foma)
+        matcher = FOMA_PARAMS_START_RE.match(foma)
         if not matcher:
             raise exceptions.NoMatchingError(self)
 
@@ -191,32 +208,30 @@ class DoCoMoUserAgent(UserAgent):
         if self.model == 'MST_v_SH2101V':
             self.model = 'SH2101V'
 
-        matcher = re.match(r'^[^(]+\((.*?)\)$', foma)
+        matcher = FOMA_PARAMS_RE.match(foma)
         if matcher:
             for value in matcher.group(1).split(';'):
-                # PHP version does not use the suffix '$'
-                # Should we follow that?
-                matcher = re.match(r'^c(\d+)$', value)
+                matcher = FOMA_CACHE_RE.match(value)
                 if matcher:
                     self._cache_size = int(matcher.group(1))
                     continue
-                
-                matcher = re.match('^ser(\w{15})$', value)
+
+                matcher = FOMA_SERIALNUMBER_RE.match(value)
                 if matcher:
                     self.serialnumber = matcher.group(1)
                     continue
 
-                matcher = re.match(r'^(T[CDBJ])$', value)
+                matcher = FOMA_STATUS_RE.match(value)
                 if matcher:
                     self._status = matcher.group(1)
-                    continue;
-
-                matcher = re.match(r'^icc(\w{20})?$', value)
+                    continue
+                
+                matcher = FOMA_CARDID_RE.match(value)
                 if matcher:
                     self.card_id = matcher.group(1)
                     continue
-
-                matcher = re.match(r'^W(\d+)H(\d+)$', value)
+                
+                matcher = FOMA_DISPLAY_BYTES_RE.match(value)
                 if matcher:
                     self._display_bytes = '%s*%s' % (matcher.group(1),
                                                      matcher.group(2))
