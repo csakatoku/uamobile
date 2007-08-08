@@ -133,5 +133,8 @@ DATA = (
 ('DoCoMo/2.0 SH902i(c100;TB;W24H12)', '2.0', '6.0', 'SH902i', 100, True, 'SH', '902i', { 'status':'TB' }),
 ('DoCoMo/2.0 NM850iG(c100;TB;W22H10;ser000000000000000;icc)', '2.0', '4.0', 'NM850iG', 100, True, 'NM', '850i', { 'status':'TB' }),
 ('DoCoMo/2.0 N703imyu(c100;TB;W24H12)', '2.0', '7.0', 'N703imyu', 100, True, 'N', '703i', { 'status':'TB' }),
-('DoCoMo/2.0 P703imyu(c100;TB;W24H12)', '2.0', '6.0', 'P703imyu', 100, True, 'P', '703i', { 'status':'TB' })
+('DoCoMo/2.0 P703imyu(c100;TB;W24H12)', '2.0', '6.0', 'P703imyu', 100, True, 'P', '703i', { 'status':'TB' }),
+('DoCoMo/2.0 SH904i(c100;TB;W24H16)', '2.0', '7.0', 'SH904i', 100, True, 'SH', '904i', { 'status':'TB' }),
+('DoCoMo/2.0 N904i(c100;TB;W30H20)', '2.0', '7.0', 'N904i', 100, True, 'N', '904i', { 'status':'TB' }),
+('DoCoMo/2.0 N704imyu(c100;TB;W24H12)', '2.0', '7.0', 'N704imyu', 100, True, 'N', '704i', { 'status':'TB' })
 )

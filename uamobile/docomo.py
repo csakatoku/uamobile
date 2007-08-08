@@ -47,7 +47,7 @@ class DoCoMoUserAgent(UserAgent):
                          (re.compile('eggy|P751v'), '3.2'),
                          (re.compile('505i|252i|900i|506i|880i|253i|P213i|901i|700i|851i|701i|881i|^SA800i$|600i|^L601i$|^M702i(S|G)$'), '5.0'),
                          (re.compile('902i|702i|851i|882i|^N601i$|^D800iDS$|^P703imyu$'), '6.0'),
-                         (re.compile('903i|703i'), '7.0')
+                         (re.compile('903i|703i|904i|704i'), '7.0')
                          ))
 
     def __init__(self, *args, **kwds):
