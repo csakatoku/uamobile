@@ -142,7 +142,7 @@ class DoCoMoUserAgent(UserAgent):
         create a new Display object.
         """
         info = get_map(self.model)
-        return Display(info)
+        return Display(**info)
 
     def parse(self):
         main, foma_or_comment = (self.useragent.split(' ', 1) + [None])[:2]
@@ -245,10 +245,14 @@ class DoCoMoUserAgent(UserAgent):
 
 def get_map(model, __maps={}):
     try:
-        return __maps['docomo']
+        map = __maps['docomo']
     except KeyError, e:
-        __maps['docomo'] = _parse_display_map()
-        return __maps['docomo']
+        map = __maps['docomo'] = _parse_display_map()
+
+    try:
+        return map[model.upper()]
+    except KeyError, e:
+        return {}
 
 def _parse_display_map():
     import os
@@ -256,8 +260,12 @@ def _parse_display_map():
     for evt, el in iterparse(file(os.path.join(os.path.dirname(__file__), 'displaymap.xml'))):
         if el.tag == 'terminal':
             model = el.attrib['model']
-            map[model] = { 'color' : el.attrib['color'],
-                           'depth' : el.attrib['depth'],
-                           'height': el.attrib['height'],
-                           'width' : el.attrib['width'] }
+            color = el.attrib['color'] and int(el.attrib['color']) or None
+            depth = el.attrib['depth'] and int(el.attrib['depth']) or None
+            width = el.attrib['width'] and int(el.attrib['width']) or None
+            height = el.attrib['height'] and int(el.attrib['height']) or None            
+            map[model] = { 'color' : color,
+                           'depth' : depth,
+                           'height': height,
+                           'width' : width }
     return map
