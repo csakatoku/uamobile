@@ -13,7 +13,7 @@ class NonMobileUserAgent(UserAgent):
     def is_nonmobile(self):
         return True
 
-    def is_cookie_available(self):
+    def supports_cookie(self):
         return True
 
     def parse(self):

@@ -134,7 +134,7 @@ class DoCoMoUserAgent(UserAgent):
     def is_foma(self):
         return self._is_foma
 
-    def is_cookie_available(self):
+    def supports_cookie(self):
         return False
 
     def make_display(self):

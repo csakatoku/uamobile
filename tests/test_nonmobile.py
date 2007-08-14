@@ -23,8 +23,8 @@ def test_useragent_nonmobile():
         assert ua.is_jphone() == False
         assert ua.is_willcom() == False
         assert ua.is_nonmobile()
-        assert ua.display is not None
-        assert ua.is_cookie_available() == True
+        assert ua.display is not None       
+        assert ua.supports_cookie() == True
 
         assert ua.serialnumber is None
         

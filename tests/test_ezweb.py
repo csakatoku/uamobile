@@ -57,8 +57,7 @@ def test_useragent_ezweb():
         assert ua.is_wap1() == is_wap1
         assert ua.is_wap2() == is_wap2
         assert ua.display is not None
-
-        assert ua.is_cookie_available() == True
+        assert ua.supports_cookie() == True
         
     for args in DATA:
         yield ([inner] + list(args))

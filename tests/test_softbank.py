@@ -67,7 +67,7 @@ def test_jphone_2_0():
     assert ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
-    assert ua.is_cookie_available() == False
+    assert ua.supports_cookie() == False
 
 def test_jphone_3_0():
     ua = detect(Environ('J-PHONE/3.0/J-PE03_a'))
@@ -75,21 +75,21 @@ def test_jphone_3_0():
     assert ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
-    assert ua.is_cookie_available() == False
+    assert ua.supports_cookie() == False
 
 def test_jphone_4_0():
     ua = detect(Environ('J-PHONE/4.0/J-SH51/SNJSHA3029293 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0'))
     assert not ua.is_type_c(), 'Invalid type %s' % ua.version
     assert ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
-    assert ua.is_cookie_available() == False    
+    assert ua.supports_cookie() == False
 
 def test_jphone_5_0():    
     ua = detect(Environ('J-PHONE/5.0/V801SA'))
     assert not ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert ua.is_type_w(), 'Invalid type' % ua.version
-    assert ua.is_cookie_available() == True    
+    assert ua.supports_cookie() == True
 
 def test_vodafone_1_0():  
     ua = detect(Environ('Vodafone/1.0/V702NK/NKJ001 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1'))
@@ -97,7 +97,7 @@ def test_vodafone_1_0():
     assert not ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
-    assert ua.is_cookie_available() == True
+    assert ua.supports_cookie() == True
 
 def test_yahoo_crawler():
     ua = detect({'HTTP_USER_AGENT':'J-PHONE/2.0/J-SH03 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)'})
@@ -106,7 +106,8 @@ def test_yahoo_crawler():
     assert ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
-    assert ua.is_cookie_available() == False
+    assert ua.supports_cookie() == False
+
 
 def test_error_agents():
     def tester(useragent):

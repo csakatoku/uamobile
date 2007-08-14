@@ -24,7 +24,7 @@ class WillcomUserAgent(UserAgent):
         # except official web sites?
         self.serialnumber = None        
 
-    def is_cookie_available(self):
+    def supports_cookie(self):
         # TODO
         # I'm not sure All WILLCOM phones can handle HTTP cookie.
         return True

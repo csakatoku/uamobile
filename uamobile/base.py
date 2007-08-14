@@ -92,12 +92,22 @@ class UserAgent(object):
     def is_nonmobile(self):
         return False
 
-    def is_cookie_available(self):
+    def supports_cookie(self):
         """
         returns True if the agent supports HTTP cookie.
         """
         raise NotImplementedError
 
+    def is_cookie_available(self):
+        """
+        returns True if the agent supports HTTP cookie.
+        note that this methid is deprecated.
+        """
+        import warnings
+        warnings.warn("The method 'is_cookie_available' is deprecated. Use supports_cookie instead.",
+                      category=DeprecationWarning,
+                      stacklevel=2)
+        return self.supports_cookie()
 
 class Display(object):
     """

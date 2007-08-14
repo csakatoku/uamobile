@@ -23,8 +23,7 @@ def test_useragent_docomo():
         assert ua.vendor == vendor, (ua, vendor)
         assert ua.series == series, msg(ua, ua.series, series)
         assert ua.display is not None
-
-        assert ua.is_cookie_available() == False
+        assert ua.supports_cookie() == False
         
         if options:
             for k, v in options.items():

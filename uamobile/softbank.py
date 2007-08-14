@@ -27,7 +27,7 @@ class SoftBankUserAgent(UserAgent):
         self._is_3g = True
         self.msname = ''
 
-    def is_cookie_available(self):
+    def supports_cookie(self):
         """
         returns True if the device supports HTTP Cookie.
         For more information, see

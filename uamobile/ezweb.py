@@ -19,7 +19,7 @@ class EZwebUserAgent(UserAgent):
         self.device_id = ''
         self.server = ''
 
-    def is_cookie_available(self):
+    def supports_cookie(self):
         return True
 
     def parse(self):
