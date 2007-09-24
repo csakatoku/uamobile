@@ -41,13 +41,13 @@ class DoCoMoUserAgent(UserAgent):
     short_carrier = 'D'
 
     HTML_VERSION_MAP = (((re.compile('[DFNP]501i'), '1.0'),
-                         (re.compile('502i|821i|209i|651|691i|(F|N|P|KO)210i|^F671i$'), '2.0'),
-                         (re.compile('(D210i|SO210i)|503i|211i|SH251i|692i|200[12]|2101V'), '3.0'),
+                         (re.compile('502i|821i|209i|651|691i|(?:F|N|P|KO)210i|^F671i$'), '2.0'),
+                         (re.compile('(?:D210i|SO210i)|503i|211i|SH251i|692i|200[12]|2101V'), '3.0'),
                          (re.compile('504i|251i|^F671iS$|212i|2051|2102V|661i|2701|672i|SO213i|850i'), '4.0'),
                          (re.compile('eggy|P751v'), '3.2'),
-                         (re.compile('505i|252i|900i|506i|880i|253i|P213i|901i|700i|851i|701i|881i|^SA800i$|600i|^L601i$|^M702i(S|G)$'), '5.0'),
-                         (re.compile('902i|702i|851i|882i|^N601i$|^D800iDS$|^P703imyu$'), '6.0'),
-                         (re.compile('903i|703i|904i|704i'), '7.0')
+                         (re.compile('505i|252i|900i|506i|880i|253i|P213i|901i|700i|851i$|701i|881i|^SA800i$|600i|^L601i$|^M702i(?:S|G)$|^L602i$'), '5.0'),
+                         (re.compile('902i|702i|851iWM|882i|883i$|^N601i$|^D800iDS$|^P70[34]imyu$'), '6.0'),
+                         (re.compile('883iES|903i|703i|904i|704i'), '7.0')
                          ))
 
     def __init__(self, *args, **kwds):
@@ -75,7 +75,7 @@ class DoCoMoUserAgent(UserAgent):
                 return value
         return None
     html_version = property(get_html_version)
-        
+
     def get_cache_size(self):
         """
         returns cache size as kilobytes unit.
@@ -106,7 +106,7 @@ class DoCoMoUserAgent(UserAgent):
         """
         if self._is_foma and FOMA_SERIES_4DIGITS_RE.search(self.model):
             return 'FOMA'
-    
+
         matcher = FOMA_SERIES_3DIGITS_RE.search(self.model)
         if matcher:
             return matcher.group(1)
@@ -183,7 +183,7 @@ class DoCoMoUserAgent(UserAgent):
                 if matcher:
                     self.serialnumber = matcher.group(1)
                     continue
-                
+
                 matcher = BANDWIDTH_RE.match(value)
                 if matcher:
                     self.bandwidth = int(matcher.group(1))
@@ -225,12 +225,12 @@ class DoCoMoUserAgent(UserAgent):
                 if matcher:
                     self._status = matcher.group(1)
                     continue
-                
+
                 matcher = FOMA_CARDID_RE.match(value)
                 if matcher:
                     self.card_id = matcher.group(1)
                     continue
-                
+
                 matcher = FOMA_DISPLAY_BYTES_RE.match(value)
                 if matcher:
                     self._display_bytes = '%s*%s' % (matcher.group(1),
@@ -263,7 +263,7 @@ def _parse_display_map():
             color = el.attrib['color'] and int(el.attrib['color']) or None
             depth = el.attrib['depth'] and int(el.attrib['depth']) or None
             width = el.attrib['width'] and int(el.attrib['width']) or None
-            height = el.attrib['height'] and int(el.attrib['height']) or None            
+            height = el.attrib['height'] and int(el.attrib['height']) or None
             map[model] = { 'color' : color,
                            'depth' : depth,
                            'height': height,
