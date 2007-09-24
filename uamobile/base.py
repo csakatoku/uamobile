@@ -12,6 +12,7 @@ class UserAgent(object):
             self.useragent = ''
         self.environ = environ
         self.version = ''
+        self._display = None
 
     def __repr__(self):
         return '<%s "%s">' % (self.__class__.__name__, self.useragent)
@@ -29,7 +30,9 @@ class UserAgent(object):
         """
         returns Display object.
         """
-        return self.make_display()
+        if self._display is None:
+            self._display = self.make_display()
+        return self._display
     display = property(get_display)
 
     def make_display(self):
