@@ -23,7 +23,12 @@ class UserAgent(object):
     def getheader(self, key, default=None):
         """
         Gets the header for the given key.
+        note that this method is deprecated.
         """
+        import warnings
+        warnings.warn("The method 'getheader' is deprecated. Use the 'environ' property.",
+                      category=DeprecationWarning,
+                      stacklevel=2)
         return self.environ.get(key, default)
 
     def get_display(self):
