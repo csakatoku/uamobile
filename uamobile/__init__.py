@@ -36,9 +36,9 @@ def detect(environ):
 
     try:
         device.parse()
-    except exceptions.NoMatchingError:
-        raise
-    #except ValueError, e:
-    #    raise exceptions.NoMatchingError(result, e)
+    except exceptions.NoMatchingError, e:
+        raise e
+    except ValueError, e:
+        raise exceptions.NoMatchingError(device, e)
 
     return device
