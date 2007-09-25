@@ -7,7 +7,6 @@ CARRIER_RE = re.compile(r'^(?:(SoftBank|Vodafone|J-PHONE)/\d\.\d|MOT-)')
 
 MODEL_VERSION_RE = re.compile(r'^([a-z]+)((?:[a-z]|\d){4})$', re.I)
 
-SERIALNUMBER_RE = re.compile(r'^SN(.+)')
 VODAFONE_VENDOR_RE = re.compile(r'V\d+([A-Z]+)')
 JPHONE_VENDOR_RE = re.compile(r'J-([A-Z]+)')
 JPHONE_COLOR_RE = re.compile(r'^([CG])(\d+)$')
@@ -73,30 +72,33 @@ class SoftBankUserAgent(UserAgent):
         """
         try:
             return self.environ['HTTP_X_JPHONE_UID']
-        except KeyError:
+        except KeyError, e:
             return None
     jphone_uid = property(get_jphone_uid)
 
     def parse(self):
         ua = self.useragent.split(' ')
-        
+
         matcher = CARRIER_RE.match(ua[0])
         carrier = matcher.group(1) or 'Motorola'
-        { 'Vodafone': self._parse_vodaphone,
+        { 'Vodafone' : self._parse_vodaphone,
           'SoftBank' : self._parse_vodaphone,
           'J-PHONE'  : self._parse_jphone,
           'Motorola' : self._parse_motorola }[carrier](ua)
 
-        self.msname = self.getheader('HTTP_X_JPHONE_MSNAME')
+        try:
+            self.msname = self.environ['HTTP_X_JPHONE_MSNAME']
+        except KeyError, e:
+            self.msname = None
 
     def make_display(self):
         """
         create a new Display object.
-        """       
+        """
         try:
-            display = self.environ['HTTP_X_JPHONE_DISPLAY']            
+            display = self.environ['HTTP_X_JPHONE_DISPLAY']
             width, height = map(int, display.split('*'))
-        except (KeyError, ValueError):
+        except (KeyError, ValueError), e:
             return Display()
 
         color = False
@@ -108,9 +110,9 @@ class SoftBankUserAgent(UserAgent):
                 color = (matcher.group(1) == 'C')
                 try:
                     depth = int(matcher.group(2))
-                except ValueError:
+                except ValueError, e:
                     pass
-        except KeyError:
+        except KeyError, e2:
             pass
 
         return Display(width=width, height=height, color=color, depth=depth)
@@ -129,10 +131,9 @@ class SoftBankUserAgent(UserAgent):
          serial) = (ua[0].split('/') + [None, None, None, None])[:5]
 
         if serial:
-            matcher = SERIALNUMBER_RE.match(serial)
-            if not matcher:
+            if not serial.startswith('SN'):
                 raise exceptions.NoMatchingError(self)
-            self.serialnumber = matcher.group(1)
+            self.serialnumber = serial[2:]
 
         if not model_version:
             raise exceptions.NoMatchingError(self)
@@ -156,16 +157,15 @@ class SoftBankUserAgent(UserAgent):
              self.model,
              serial) = (ua[0].split('/') + [None, None, None])[:4]
             if serial:
-                matcher = SERIALNUMBER_RE.match(serial)
-                if not matcher:
+                if not serial.startswith('SN'):
                     raise exceptions.NoMatchingError(self)
-                self.serialnumber = matcher.group(1)
+                self.serialnumber = serial[2:]
 
             try:
                 self.vendor, self.vendor_version = ua[1].split('/')
             except ValueError, e:
                 raise ValueError(str(ua))
-            self.java_info.update([x.split('/') for x in ua[2:]])            
+            self.java_info.update([x.split('/') for x in ua[2:]])
         else:
             # J-PHONE/2.0/J-DN02
             # J-PHONE/2.0/J-SH03 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)

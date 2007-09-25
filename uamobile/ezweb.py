@@ -4,7 +4,7 @@ from uamobile.base import UserAgent, Display
 
 import re
 
-KDDI_RE = re.compile(r'^KDDI-(.*)')
+#KDDI_RE = re.compile(r'^KDDI-(.*)')
 UP_BROWSER_COMMENT_RE = re.compile('^\((.*)\)$')
 
 class EZwebUserAgent(UserAgent):
@@ -23,21 +23,21 @@ class EZwebUserAgent(UserAgent):
         return True
 
     def parse(self):
-        matcher = KDDI_RE.match(self.useragent)
-        if matcher:
+        if self.useragent.startswith('KDDI-'):
             # KDDI-TS21 UP.Browser/6.0.2.276 (GUI) MMP/1.1
             # KDDI-TS3A UP.Browser/6.2.0.11.2.1 (GUI) MMP/2.0, Mozilla/4.08 (MobilePhone; NMCS/3.3) NetFront/3.3
+            useragent = self.useragent[5:]
             self.xhtml_compliant = True
-            self.device_id, browser, opt, self.server = matcher.group(1).split(' ', 4)[:4]
+            self.device_id, browser, opt, self.server = useragent.split(' ', 4)[:4]
             if self.server.endswith(','):
                 self.server = self.server[:-1]
             self._name, version = browser.split('/')
             self.version = '%s %s' % (version, opt)
         else:
             # UP.Browser/3.01-HI01 UP.Link/3.4.5.2
-            browser, self.server, comment = (self.useragent.split(' ', 2) + [None, None, None])[:3]
-            self._name, software = browser.split('/')
-            self.version, self.device_id = software.split('-')
+            browser, self.server, comment = (self.useragent.split(' ', 2) + [None, None])[:3]
+            self._name, software = browser.split('/', 1)
+            self.version, self.device_id = software.split('-', 1)
             if comment:
                 self._comment = UP_BROWSER_COMMENT_RE.sub(r'\1', comment)
 
