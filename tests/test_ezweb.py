@@ -13,6 +13,10 @@ def test_yahooo_crawler():
     ua = detect({'HTTP_USER_AGENT':'KDDI-CA23 UP.Browser/6.2.0.5 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)'})
     assert ua.is_ezweb()
 
+def test_no_subscription_id():
+    ua = detect({'HTTP_USER_AGENT': 'KDDI-SA35 UP.Browser/6.2.0.9.1 (GUI) MMP/2.0'})
+    assert ua.serialnumber is None
+
 def test_display():
     env = {'HTTP_USER_AGENT': 'KDDI-SA35 UP.Browser/6.2.0.9.1 (GUI) MMP/2.0',
            'HTTP_X_UP_DEVCAP_MAX_PDU': '131072',
@@ -35,7 +39,7 @@ def test_display():
     assert ua.display.color == True
     assert ua.display.is_vga() == False
     assert ua.display.is_qvga() == True
-    
+
 def test_useragent_ezweb():
     def inner(useragent, version, model, device_id, server, xhtml_compliant, comment, is_wap1, is_wap2):
         ua = detect(Environ(useragent))
@@ -58,7 +62,7 @@ def test_useragent_ezweb():
         assert ua.is_wap2() == is_wap2
         assert ua.display is not None
         assert ua.supports_cookie() == True
-        
+
     for args in DATA:
         yield ([inner] + list(args))
 

@@ -64,8 +64,7 @@ class EZwebUserAgent(UserAgent):
         return the EZweb subscriber ID.
         if no subscriber ID is available, returns None.
         """
-        serial = self.getheader('HTTP_X_UP_SUBNO', None)
-        return serial
+        return self.environ.get('HTTP_X_UP_SUBNO', None)
     serialnumber = property(get_serialnumber)
 
     def get_comment(self):
