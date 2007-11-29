@@ -4,7 +4,7 @@ from uamobile import detect, DoCoMo
 
 def test_useragent_docomo():
     def inner(useragent, version, html_version, model, cache_size,
-              is_foma, vendor, series, options=None):
+              is_foma, vendor, series, options=None, display=None):
 
         ua = detect(Environ(useragent))
         assert ua.is_docomo()
@@ -15,7 +15,7 @@ def test_useragent_docomo():
         assert ua.is_jphone() == False
         assert ua.is_willcom() == False
         assert ua.is_nonmobile() == False, ua
-        
+
         assert ua.html_version == html_version, msg(ua, ua.html_version, html_version)
         assert ua.model == model, (ua, model)
         assert ua.cache_size == cache_size, (ua, cache_size)
@@ -23,8 +23,10 @@ def test_useragent_docomo():
         assert ua.vendor == vendor, (ua, vendor)
         assert ua.series == series, msg(ua, ua.series, series)
         assert ua.display is not None
+        if display:
+            assert (ua.display.width, ua.display.height) == display, (ua.display.width, ua.display.height)
         assert ua.supports_cookie() == False
-        
+
         if options:
             for k, v in options.items():
                 if k == 'status':
@@ -116,24 +118,32 @@ DATA = (
 ('DoCoMo/1.0/SO213iS/c10/TB', '1.0', '4.0', 'SO213iS', 10, False, 'SO', '213i', { 'status':'TB' }),
 ('DoCoMo/1.0/P253i/c10/TB/W22H10', '1.0', '5.0', 'P253i', 10, False, 'P', '253i', { 'status':'TB' }),
 ('DoCoMo/1.0/P213i/c10/TB/W22H10', '1.0', '5.0', 'P213i', 10, False, 'P', '213i', { 'status':'TB' }),
-('DoCoMo/2.0 N900iG(c100;TB;W24H12)', '2.0', '5.0', 'N900iG', 100, True, 'N', '900i', { 'status':'TB' }),
-('DoCoMo/2.0 F901iC(c100;TB;W23H12)', '2.0', '5.0', 'F901iC', 100, True, 'F', '901i', { 'status':'TB' }),
-('DoCoMo/1.0/SO506iS/c20/TB/W20H10', '1.0', '5.0', 'SO506iS', 20, False, 'SO', '506i', { 'status':'TB' }),
-('DoCoMo/2.0 SH901iS(c100;TB;W24H12)', '2.0', '5.0', 'SH901iS', 100, True, 'SH', '901i', { 'status':'TB' }),
-('DoCoMo/2.0 F901iS(c100;TB;W23H12)', '2.0', '5.0', 'F901iS', 100, True, 'F', '901i', { 'status':'TB' }),
-('DoCoMo/2.0 D901iS(c100;TB;W23H12)', '2.0', '5.0', 'D901iS', 100, True, 'D', '901i', { 'status':'TB' }),
-('DoCoMo/2.0 P901iS(c100;TB;W24H12)', '2.0', '5.0', 'P901iS', 100, True, 'P', '901i', { 'status':'TB' }),
-('DoCoMo/2.0 N901iS(c100;TB;W24H12)', '2.0', '5.0', 'N901iS', 100, True, 'N', '901i', { 'status':'TB' }),
-('DoCoMo/2.0 SH851i(c100;TB;W24H12)', '2.0', '5.0', 'SH851i', 100, True, 'SH', '851i', { 'status':'TB' }),
-('DoCoMo/1.0/SO213iWR/c10/TB', '1.0', '4.0', 'SO213iWR', 10, False, 'SO', '213i', { 'status':'TB' }),
-('DoCoMo/2.0 SA700iS(c100;TB;W24H12)', '2.0', '5.0', 'SA700iS', 100, True, 'SA', '700i', { 'status':'TB' }),
-('DoCoMo/2.0 P851i(c100;TB;W24H12)', '2.0', '5.0', 'P851i', 100, True, 'P', '851i', { 'status':'TB' }),
-('DoCoMo/2.0 D701iWM(c100;TB;W23H12)', '2.0', '5.0', 'D701iWM', 100, True, 'D', '701i', { 'status':'TB' }),
-('DoCoMo/2.0 SH902i(c100;TB;W24H12)', '2.0', '6.0', 'SH902i', 100, True, 'SH', '902i', { 'status':'TB' }),
-('DoCoMo/2.0 NM850iG(c100;TB;W22H10;ser000000000000000;icc)', '2.0', '4.0', 'NM850iG', 100, True, 'NM', '850i', { 'status':'TB' }),
-('DoCoMo/2.0 N703imyu(c100;TB;W24H12)', '2.0', '7.0', 'N703imyu', 100, True, 'N', '703i', { 'status':'TB' }),
-('DoCoMo/2.0 P703imyu(c100;TB;W24H12)', '2.0', '6.0', 'P703imyu', 100, True, 'P', '703i', { 'status':'TB' }),
-('DoCoMo/2.0 SH904i(c100;TB;W24H16)', '2.0', '7.0', 'SH904i', 100, True, 'SH', '904i', { 'status':'TB' }),
-('DoCoMo/2.0 N904i(c100;TB;W30H20)', '2.0', '7.0', 'N904i', 100, True, 'N', '904i', { 'status':'TB' }),
-('DoCoMo/2.0 N704imyu(c100;TB;W24H12)', '2.0', '7.0', 'N704imyu', 100, True, 'N', '704i', { 'status':'TB' })
+('DoCoMo/2.0 N900iG(c100;TB;W24H12)', '2.0', '5.0', 'N900iG', 100, True, 'N', '900i', { 'status':'TB' }, (240, 269)),
+('DoCoMo/2.0 F901iC(c100;TB;W23H12)', '2.0', '5.0', 'F901iC', 100, True, 'F', '901i', { 'status':'TB' }, (230, 240)),
+('DoCoMo/1.0/SO506iS/c20/TB/W20H10', '1.0', '5.0', 'SO506iS', 20, False, 'SO', '506i', { 'status':'TB' }, (240, 256)),
+('DoCoMo/2.0 SH901iS(c100;TB;W24H12)', '2.0', '5.0', 'SH901iS', 100, True, 'SH', '901i', { 'status':'TB' }, (240, 252)),
+('DoCoMo/2.0 F901iS(c100;TB;W23H12)', '2.0', '5.0', 'F901iS', 100, True, 'F', '901i', { 'status':'TB' }, (230, 240)),
+('DoCoMo/2.0 D901iS(c100;TB;W23H12)', '2.0', '5.0', 'D901iS', 100, True, 'D', '901i', { 'status':'TB' }, (230, 240)),
+('DoCoMo/2.0 P901iS(c100;TB;W24H12)', '2.0', '5.0', 'P901iS', 100, True, 'P', '901i', { 'status':'TB' }, (240, 270)),
+('DoCoMo/2.0 N901iS(c100;TB;W24H12)', '2.0', '5.0', 'N901iS', 100, True, 'N', '901i', { 'status':'TB' }, (240, 270)),
+('DoCoMo/2.0 SH851i(c100;TB;W24H12)', '2.0', '5.0', 'SH851i', 100, True, 'SH', '851i', { 'status':'TB' }, (240, 252)),
+('DoCoMo/1.0/SO213iWR/c10/TB', '1.0', '4.0', 'SO213iWR', 10, False, 'SO', '213i', { 'status':'TB' }, (120, 112)),
+('DoCoMo/2.0 SA700iS(c100;TB;W24H12)', '2.0', '5.0', 'SA700iS', 100, True, 'SA', '700i', { 'status':'TB' }, (240, 252)),
+('DoCoMo/2.0 P851i(c100;TB;W24H12)', '2.0', '5.0', 'P851i', 100, True, 'P', '851i', { 'status':'TB' }, (240, 270)),
+('DoCoMo/2.0 D701iWM(c100;TB;W23H12)', '2.0', '5.0', 'D701iWM', 100, True, 'D', '701i', { 'status':'TB' }, (230, 240)),
+('DoCoMo/2.0 SH902i(c100;TB;W24H12)', '2.0', '6.0', 'SH902i', 100, True, 'SH', '902i', { 'status':'TB' }, (240, 240)),
+('DoCoMo/2.0 NM850iG(c100;TB;W22H10;ser000000000000000;icc)', '2.0', '4.0', 'NM850iG', 100, True, 'NM', '850i', { 'status':'TB' }, (176, 144)),
+('DoCoMo/2.0 N703imyu(c100;TB;W24H12)', '2.0', '7.0', 'N703imyu', 100, True, 'N', '703i', { 'status':'TB' }, (240, 270)),
+('DoCoMo/2.0 P703imyu(c100;TB;W24H12)', '2.0', '6.0', 'P703imyu', 100, True, 'P', '703i', { 'status':'TB' }, (240, 270)),
+('DoCoMo/2.0 SH904i(c100;TB;W24H16)', '2.0', '7.0', 'SH904i', 100, True, 'SH', '904i', { 'status':'TB' }, (240, 320)),
+('DoCoMo/2.0 N904i(c100;TB;W30H20)', '2.0', '7.0', 'N904i', 100, True, 'N', '904i', { 'status':'TB' }, (240, 352)),
+('DoCoMo/2.0 N704imyu(c100;TB;W24H12)', '2.0', '7.0', 'N704imyu', 100, True, 'N', '704i', { 'status':'TB' }, (240, 270)),
+('DoCoMo/2.0 SH905i(c100;TB;W24H16)', '2.0', '7.1', 'SH905i', 100, True, 'SH', '905i', {'status':'TB'}, (240, 320)),
+('DoCoMo/2.0 D905i(c100;TB;W24H17)', '2.0', '7.1', 'D905i', 100, True, 'D', '905i', {'status':'TB'}, (240, 352)),
+('DoCoMo/2.0 N905i(c100;TB;W24H16)', '2.0', '7.1', 'N905i', 100, True, 'N', '905i', {'status':'TB'}, (240, 320)),
+('DoCoMo/2.0 P905i(c100;TB;W24H15)', '2.0', '7.1', 'P905i', 100, True, 'P', '905i', {'status':'TB'}, (240, 350)),
+('DoCoMo/2.0 F905i(c100;TB;W24H17)', '2.0', '7.1', 'F905i', 100, True, 'F', '905i', {'status':'TB'}, (240, 352)),
+('DoCoMo/2.0 SO905i(c100;TB;W24H18)', '2.0', '7.1', 'SO905i', 100, True, 'SO', '905i', {'status':'TB'}, (240, 368)),
+('DoCoMo/2.0 N905imyu(c100;TB;W24H16)', '2.0', '7.1', 'N905imyu', 100, True, 'N', '905i', {'status':'TB'}, (240, 320)),
 )
+

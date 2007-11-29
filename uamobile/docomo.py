@@ -1,17 +1,9 @@
 # -*- coding: utf-8 -*-
 from uamobile import exceptions
 from uamobile.base import UserAgent, Display
+from uamobile.docomodisplaymap import DISPLAYMAP_DOCOMO
 
 import re
-from cStringIO import StringIO
-
-try:
-    from xml.etree.cElementTree import iterparse
-except ImportError:
-    try:
-        from cElementTree import iterparse
-    except ImportError:
-        from ElementTree import iterparse
 
 COMMENT_RE = re.compile(r'^\((.*)\)$')
 CACHE_RE = re.compile(r'^c(\d+)')
@@ -47,7 +39,8 @@ class DoCoMoUserAgent(UserAgent):
                          (re.compile('eggy|P751v'), '3.2'),
                          (re.compile('505i|252i|900i|506i|880i|253i|P213i|901i|700i|851i$|701i|881i|^SA800i$|600i|^L601i$|^M702i(?:S|G)$|^L602i$'), '5.0'),
                          (re.compile('902i|702i|851iWM|882i|883i$|^N601i$|^D800iDS$|^P70[34]imyu$'), '6.0'),
-                         (re.compile('883iES|903i|703i|904i|704i'), '7.0')
+                         (re.compile('883iES|903i|703i|904i|704i'), '7.0'),
+                         (re.compile('905i'), '7.1'),
                          ))
 
     def __init__(self, *args, **kwds):
@@ -141,8 +134,7 @@ class DoCoMoUserAgent(UserAgent):
         """
         create a new Display object.
         """
-        info = get_map(self.model)
-        return Display(**info)
+        return Display(**DISPLAYMAP_DOCOMO.get(self.model, {}))
 
     def parse(self):
         main, foma_or_comment = (self.useragent.split(' ', 1) + [None])[:2]
@@ -238,34 +230,3 @@ class DoCoMoUserAgent(UserAgent):
                     continue
 
                 raise exceptions.NoMatchingError(self)
-
-#########################################
-# Display information mapping for DoCoMo
-#########################################
-
-def get_map(model, __maps={}):
-    try:
-        map = __maps['docomo']
-    except KeyError, e:
-        map = __maps['docomo'] = _parse_display_map()
-
-    try:
-        return map[model.upper()]
-    except KeyError, e:
-        return {}
-
-def _parse_display_map():
-    import os
-    map = {}
-    for evt, el in iterparse(file(os.path.join(os.path.dirname(__file__), 'displaymap.xml'))):
-        if el.tag == 'terminal':
-            model = el.attrib['model']
-            color = el.attrib['color'] and int(el.attrib['color']) or None
-            depth = el.attrib['depth'] and int(el.attrib['depth']) or None
-            width = el.attrib['width'] and int(el.attrib['width']) or None
-            height = el.attrib['height'] and int(el.attrib['height']) or None
-            map[model] = { 'color' : color,
-                           'depth' : depth,
-                           'height': height,
-                           'width' : width }
-    return map
