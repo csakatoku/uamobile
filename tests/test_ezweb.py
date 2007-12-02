@@ -40,6 +40,63 @@ def test_display():
     assert ua.display.is_vga() == False
     assert ua.display.is_qvga() == True
 
+def test_display_error():
+    base_env = {'HTTP_USER_AGENT': 'KDDI-SA35 UP.Browser/6.2.0.9.1 (GUI) MMP/2.0',
+                'HTTP_X_UP_DEVCAP_SCREENPIXELS': '240,268',
+                'HTTP_X_UP_DEVCAP_SCREENDEPTH': '16,RGB565',
+                'HTTP_X_UP_DEVCAP_ISCOLOR': '1' }
+
+    # No ISCOLOR
+    env = dict(base_env)
+    del env['HTTP_X_UP_DEVCAP_ISCOLOR']
+    ua = detect(env)
+    assert ua.display.width == 240
+    assert ua.display.height == 268
+    assert ua.display.depth
+    assert ua.display.color == False
+
+    # invalid SCREENPIXELS
+    env = dict(base_env)
+    del env['HTTP_X_UP_DEVCAP_SCREENPIXELS']
+    ua = detect(env)
+    assert ua.display.width == 0
+    assert ua.display.height == 0
+    assert ua.display.color
+    assert ua.display.depth
+
+    env = dict(base_env)
+    env['HTTP_X_UP_DEVCAP_SCREENPIXELS'] = '240,egg'
+    ua = detect(env)
+    assert ua.display.width == 0
+    assert ua.display.height == 0
+    assert ua.display.color
+    assert ua.display.depth
+
+    env = dict(base_env)
+    env['HTTP_X_UP_DEVCAP_SCREENPIXELS'] = '240,268,1'
+    ua = detect(env)
+    assert ua.display.width == 0
+    assert ua.display.height == 0
+    assert ua.display.color
+    assert ua.display.depth
+
+    # invalid SCREENDEPTH
+    env = dict(base_env)
+    del env['HTTP_X_UP_DEVCAP_SCREENDEPTH']
+    ua = detect(env)
+    assert ua.display.width == 240
+    assert ua.display.height == 268
+    assert ua.display.color
+    assert ua.display.depth == 0
+
+    env = dict(base_env)
+    env['HTTP_X_UP_DEVCAP_SCREENDEPTH'] = 'spam'
+    ua = detect(env)
+    assert ua.display.width == 240
+    assert ua.display.height == 268
+    assert ua.display.color
+    assert ua.display.depth == 0
+
 def test_useragent_ezweb():
     def inner(useragent, version, model, device_id, server, xhtml_compliant, comment, is_wap1, is_wap2):
         ua = detect(Environ(useragent))

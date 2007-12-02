@@ -4,7 +4,6 @@ from uamobile.base import UserAgent, Display
 
 import re
 
-#KDDI_RE = re.compile(r'^KDDI-(.*)')
 UP_BROWSER_COMMENT_RE = re.compile('^\((.*)\)$')
 
 class EZwebUserAgent(UserAgent):
@@ -14,6 +13,7 @@ class EZwebUserAgent(UserAgent):
     def __init__(self, *args, **kwds):
         UserAgent.__init__(self, *args, **kwds)
         self._comment = None
+        self._display = None
         self.xhtml_compliant = False
         self.model = ''
         self.device_id = ''
@@ -47,14 +47,27 @@ class EZwebUserAgent(UserAgent):
         """
         create a Display object.
         """
-        try:
-            width, height = map(int, self.environ['HTTP_X_UP_DEVCAP_SCREENPIXELS'].split(','))
-            sd = self.environ['HTTP_X_UP_DEVCAP_SCREENDEPTH'].split(',')
-            depth = sd[0] and (2 ** int(sd[0])) or 0
-            color = self.environ['HTTP_X_UP_DEVCAP_ISCOLOR'] == '1'
-            return Display(width=width, height=height, color=color, depth=depth)
-        except (KeyError, ValueError), e:
-            return Display()
+        if self._display is None:
+            env = self.environ
+            try:
+                width, height = map(int, env['HTTP_X_UP_DEVCAP_SCREENPIXELS'].split(',', 1))
+            except (KeyError, ValueError), e:
+                width = None
+                height = None
+
+            try:
+                color = env['HTTP_X_UP_DEVCAP_ISCOLOR'] == '1'
+            except KeyError:
+                color = False
+
+            try:
+                sd = env['HTTP_X_UP_DEVCAP_SCREENDEPTH'].split(',', 1)
+                depth = sd[0] and (2 ** int(sd[0])) or 0
+            except (KeyError, ValueError):
+                depth = None
+
+            self._display = Display(width=width, height=height, color=color, depth=depth)
+        return self._display
 
     def is_ezweb(self):
         return True
@@ -64,7 +77,10 @@ class EZwebUserAgent(UserAgent):
         return the EZweb subscriber ID.
         if no subscriber ID is available, returns None.
         """
-        return self.environ.get('HTTP_X_UP_SUBNO', None)
+        try:
+            return self.environ['HTTP_X_UP_SUBNO']
+        except KeyError:
+            return None
     serialnumber = property(get_serialnumber)
 
     def get_comment(self):
