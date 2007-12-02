@@ -3,13 +3,10 @@ from uamobile import exceptions
 from uamobile.base import UserAgent, Display
 import re
 
-CARRIER_RE = re.compile(r'^(?:(SoftBank|Vodafone|J-PHONE)/\d\.\d|MOT-)')
-
 MODEL_VERSION_RE = re.compile(r'^([a-z]+)((?:[a-z]|\d){4})$', re.I)
 
 VODAFONE_VENDOR_RE = re.compile(r'V\d+([A-Z]+)')
 JPHONE_VENDOR_RE = re.compile(r'J-([A-Z]+)')
-JPHONE_COLOR_RE = re.compile(r'^([CG])(\d+)$')
 
 class SoftBankUserAgent(UserAgent):
     carrier = 'SoftBank'
@@ -25,6 +22,7 @@ class SoftBankUserAgent(UserAgent):
         self.java_info = {}
         self._is_3g = True
         self.msname = ''
+        self._display = None
 
     def supports_cookie(self):
         """
@@ -72,19 +70,22 @@ class SoftBankUserAgent(UserAgent):
         """
         try:
             return self.environ['HTTP_X_JPHONE_UID']
-        except KeyError, e:
+        except KeyError:
             return None
     jphone_uid = property(get_jphone_uid)
 
     def parse(self):
         ua = self.useragent.split(' ')
 
-        matcher = CARRIER_RE.match(ua[0])
-        carrier = matcher.group(1) or 'Motorola'
-        { 'Vodafone' : self._parse_vodaphone,
-          'SoftBank' : self._parse_vodaphone,
-          'J-PHONE'  : self._parse_jphone,
-          'Motorola' : self._parse_motorola }[carrier](ua)
+        carrier = ua[0]
+        if carrier.startswith('SoftBank') or carrier.startswith('Vodafone'):
+            self._parse_vodaphone(ua)
+        elif carrier.startswith('J-PHONE'):
+            self._parse_jphone(ua)
+        elif carrier.startswith('MOT-'):
+            self._parse_motorola(ua)
+        else:
+            raise exceptions.NoMatchingError(self)
 
         try:
             self.msname = self.environ['HTTP_X_JPHONE_MSNAME']
@@ -95,27 +96,31 @@ class SoftBankUserAgent(UserAgent):
         """
         create a new Display object.
         """
-        try:
-            display = self.environ['HTTP_X_JPHONE_DISPLAY']
-            width, height = map(int, display.split('*'))
-        except (KeyError, ValueError), e:
-            return Display()
+        if self._display is None:
+            try:
+                width, height = map(int, self.environ['HTTP_X_JPHONE_DISPLAY'].split('*', 1))
+            except (KeyError, ValueError, AttributeError):
+                width = None
+                height = None
 
-        color = False
-        depth = 0
-        try:
-            color_string = self.environ['HTTP_X_JPHONE_COLOR']
-            matcher = JPHONE_COLOR_RE.match(color_string)
-            if matcher:
-                color = (matcher.group(1) == 'C')
+            try:
+                color_string = self.environ['HTTP_X_JPHONE_COLOR']
                 try:
-                    depth = int(matcher.group(2))
-                except ValueError, e:
-                    pass
-        except KeyError, e2:
-            pass
+                    color = color_string.startswith('C')
+                except AttributeError:
+                    color = False
 
-        return Display(width=width, height=height, color=color, depth=depth)
+                try:
+                    depth = int(color_string[1:])
+                except (ValueError, TypeError):
+                    depth = 0
+            except KeyError:
+                color = False
+                depth = 0
+
+            self._display = Display(width=width, height=height, color=color, depth=depth)
+
+        return self._display
 
     def _parse_vodaphone(self, ua):
         self.packet_compliant = True
@@ -127,7 +132,7 @@ class SoftBankUserAgent(UserAgent):
         (self.name,
          self.version,
          self.model,
-         model_version,
+         vendor_version,
          serial) = (ua[0].split('/') + [None, None, None, None])[:5]
 
         if serial:
@@ -135,15 +140,11 @@ class SoftBankUserAgent(UserAgent):
                 raise exceptions.NoMatchingError(self)
             self.serialnumber = serial[2:]
 
-        if not model_version:
-            raise exceptions.NoMatchingError(self)
-
-        matcher = MODEL_VERSION_RE.match(model_version)
+        matcher = MODEL_VERSION_RE.match(vendor_version or '')
         if not matcher:
             raise exceptions.NoMatchingError(self)
 
-        self.vendor = matcher.group(1)
-        self.vendor_version = matcher.group(2)
+        self.vendor, self.vendor_version = matcher.groups()
 
         self.java_info.update([x.split('/') for x in ua[2:]])
 

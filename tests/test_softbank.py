@@ -21,6 +21,61 @@ def test_display():
     assert ua.display.is_qvga() == True
     assert ua.display.is_vga() == True
 
+def test_display_error():
+    base_env = {'HTTP_USER_AGENT': 'Vodafone/1.0/V904SH/SHJ003/SN000000000000000 Browser/VF-NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1',
+                'HTTP_X_JPHONE_COLOR': 'C262144',
+                'HTTP_X_JPHONE_DISPLAY': '480*640'
+           }
+
+    def func(ua, width, height, color, depth):
+        assert ua.display.width == width
+        assert ua.display.height == height
+        assert ua.display.color == color
+        assert ua.display.depth == depth
+
+    # Invalid COLOR
+    env = dict(base_env)
+    del env['HTTP_X_JPHONE_COLOR']
+    ua = detect(env)
+    yield (func, ua, 480, 640, False, 0)
+
+    env = dict(base_env)
+    env['HTTP_X_JPHONE_COLOR'] = 'spam'
+    ua = detect(env)
+    yield (func, ua, 480, 640, False, 0)
+
+    env = dict(base_env)
+    env['HTTP_X_JPHONE_COLOR'] = ''
+    ua = detect(env)
+    yield (func, ua, 480, 640, False, 0)
+
+    env = dict(base_env)
+    env['HTTP_X_JPHONE_COLOR'] = 1
+    ua = detect(env)
+    yield (func, ua, 480, 640, False, 0)
+
+    # Invalid DISPLAY
+    env = dict(base_env)
+    del env['HTTP_X_JPHONE_DISPLAY']
+    ua = detect(env)
+    yield (func, ua, 0, 0, True, 262144)
+
+    env = dict(base_env)
+    env['HTTP_X_JPHONE_DISPLAY'] = '480'
+    ua = detect(env)
+    yield (func, ua, 0, 0, True, 262144)
+
+    env = dict(base_env)
+    env['HTTP_X_JPHONE_DISPLAY'] = '480*spam'
+    ua = detect(env)
+    yield (func, ua, 0, 0, True, 262144)
+
+    # Invalid type
+    env = dict(base_env)
+    env['HTTP_X_JPHONE_DISPLAY'] = 1
+    ua = detect(env)
+    yield (func, ua, 0, 0, True, 262144)
+
 def test_jphone_uid():
     useragent = 'Vodafone/1.0/V904SH/SHJ003/SN000000000000000 Browser/VF-NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1'
     ua = detect({'HTTP_USER_AGENT': useragent,
@@ -47,7 +102,7 @@ def test_useragent_softbank():
         assert ua.is_willcom() == False
         assert ua.is_nonmobile() == False
         assert ua.display is not None
-       
+
         if serial_number:
             assert ua.serialnumber == serial_number, msg(ua, ua.serialnumber, serial_number)
             assert ua.version == version
@@ -84,14 +139,14 @@ def test_jphone_4_0():
     assert not ua.is_type_w(), 'Invalid type' % ua.version
     assert ua.supports_cookie() == False
 
-def test_jphone_5_0():    
+def test_jphone_5_0():
     ua = detect(Environ('J-PHONE/5.0/V801SA'))
     assert not ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert ua.is_type_w(), 'Invalid type' % ua.version
     assert ua.supports_cookie() == True
 
-def test_vodafone_1_0():  
+def test_vodafone_1_0():
     ua = detect(Environ('Vodafone/1.0/V702NK/NKJ001 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1'))
     assert ua.is_3g(), 'Invalid generation'
     assert not ua.is_type_c(), 'Invalid type %s' % ua.version
@@ -108,7 +163,6 @@ def test_yahoo_crawler():
     assert not ua.is_type_w(), 'Invalid type' % ua.version
     assert ua.supports_cookie() == False
 
-
 def test_error_agents():
     def tester(useragent):
         try:
@@ -119,7 +173,6 @@ def test_error_agents():
             raise 'NoMatchingError expected'
     for datum in ERRORS:
         yield tester, datum
-    
 
 #########################
 # Test data
@@ -148,5 +201,6 @@ DATA = (
 )
 
 ERRORS = ('J-PHONE/4.0/J-SH51_a/ZNJSHA5081372 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0',
-          'Vodafone/1.0/V702NK'
+          'Vodafone/1.0/V702NK',
+          'Vodafone/1.0/V702NK/NKJ001/123456789012345 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1',
           )
