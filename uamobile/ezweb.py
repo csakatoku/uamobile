@@ -13,7 +13,6 @@ class EZwebUserAgent(UserAgent):
     def __init__(self, *args, **kwds):
         UserAgent.__init__(self, *args, **kwds)
         self._comment = None
-        self._display = None
         self.xhtml_compliant = False
         self.model = ''
         self.device_id = ''
@@ -47,27 +46,25 @@ class EZwebUserAgent(UserAgent):
         """
         create a Display object.
         """
-        if self._display is None:
-            env = self.environ
-            try:
-                width, height = map(int, env['HTTP_X_UP_DEVCAP_SCREENPIXELS'].split(',', 1))
-            except (KeyError, ValueError), e:
-                width = None
-                height = None
+        env = self.environ
+        try:
+            width, height = map(int, env['HTTP_X_UP_DEVCAP_SCREENPIXELS'].split(',', 1))
+        except (KeyError, ValueError), e:
+            width = None
+            height = None
 
-            try:
-                color = env['HTTP_X_UP_DEVCAP_ISCOLOR'] == '1'
-            except KeyError:
-                color = False
+        try:
+            color = env['HTTP_X_UP_DEVCAP_ISCOLOR'] == '1'
+        except KeyError:
+            color = False
 
-            try:
-                sd = env['HTTP_X_UP_DEVCAP_SCREENDEPTH'].split(',', 1)
-                depth = sd[0] and (2 ** int(sd[0])) or 0
-            except (KeyError, ValueError):
-                depth = None
+        try:
+            sd = env['HTTP_X_UP_DEVCAP_SCREENDEPTH'].split(',', 1)
+            depth = sd[0] and (2 ** int(sd[0])) or 0
+        except (KeyError, ValueError):
+            depth = None
 
-            self._display = Display(width=width, height=height, color=color, depth=depth)
-        return self._display
+        return Display(width=width, height=height, color=color, depth=depth)
 
     def is_ezweb(self):
         return True

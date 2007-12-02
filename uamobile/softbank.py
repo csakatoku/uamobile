@@ -20,7 +20,6 @@ class SoftBankUserAgent(UserAgent):
         self.java_info = {}
         self._is_3g = True
         self.msname = ''
-        self._display = None
 
     def supports_cookie(self):
         """
@@ -94,31 +93,28 @@ class SoftBankUserAgent(UserAgent):
         """
         create a new Display object.
         """
-        if self._display is None:
-            try:
-                width, height = map(int, self.environ['HTTP_X_JPHONE_DISPLAY'].split('*', 1))
-            except (KeyError, ValueError, AttributeError):
-                width = None
-                height = None
+        try:
+            width, height = map(int, self.environ['HTTP_X_JPHONE_DISPLAY'].split('*', 1))
+        except (KeyError, ValueError, AttributeError):
+            width = None
+            height = None
 
+        try:
+            color_string = self.environ['HTTP_X_JPHONE_COLOR']
             try:
-                color_string = self.environ['HTTP_X_JPHONE_COLOR']
-                try:
-                    color = color_string.startswith('C')
-                except AttributeError:
-                    color = False
-
-                try:
-                    depth = int(color_string[1:])
-                except (ValueError, TypeError):
-                    depth = 0
-            except KeyError:
+                color = color_string.startswith('C')
+            except AttributeError:
                 color = False
+
+            try:
+                depth = int(color_string[1:])
+            except (ValueError, TypeError):
                 depth = 0
+        except KeyError:
+            color = False
+            depth = 0
 
-            self._display = Display(width=width, height=height, color=color, depth=depth)
-
-        return self._display
+        return Display(width=width, height=height, color=color, depth=depth)
 
     def _parse_vodaphone(self, ua):
         self.packet_compliant = True

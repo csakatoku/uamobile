@@ -54,6 +54,7 @@ class DoCoMoUserAgent(UserAgent):
         self._cache_size = None
         self._display_bytes = ''
         self._is_foma = False
+        self._display = None
 
     def is_docomo(self):
         return True
@@ -134,7 +135,11 @@ class DoCoMoUserAgent(UserAgent):
         """
         create a new Display object.
         """
-        return Display(**DISPLAYMAP_DOCOMO.get(self.model, {}))
+        try:
+            params = DISPLAYMAP_DOCOMO[self.model]
+        except KeyError:
+            params = {}
+        return Display(**params)
 
     def parse(self):
         main, foma_or_comment = (self.useragent.split(' ', 1) + [None])[:2]
