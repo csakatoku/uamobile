@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from tests import msg, MockWSGIEnviron as Environ
+from tests import msg
 from uamobile import detect, exceptions, SoftBank
 
 def test_display():
@@ -88,7 +88,7 @@ def test_jphone_uid():
 def test_useragent_softbank():
     def inner(useragent, version, model, packet_compliant,
               serial_number=None, vendor=None, vendor_version=None, java_infos=None):
-        ua = detect(Environ(useragent))
+        ua = detect({'HTTP_USER_AGENT': useragent})
 
         assert isinstance(ua, SoftBank)
         assert ua.carrier == 'SoftBank'
@@ -116,38 +116,42 @@ def test_useragent_softbank():
         yield ([inner] + list(args))
 
 def test_jphone_2_0():
-    ua = detect(Environ('J-PHONE/2.0/J-DN02'))
+    ua = detect({'HTTP_USER_AGENT':'J-PHONE/2.0/J-DN02'})
     assert isinstance(ua.version, basestring)
     assert not ua.is_3g(), 'Invalid generation'
     assert ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
     assert ua.supports_cookie() == False
+    assert ua.vendor == 'DN', ua.vendor
 
 def test_jphone_3_0():
-    ua = detect(Environ('J-PHONE/3.0/J-PE03_a'))
+    ua = detect({'HTTP_USER_AGENT':'J-PHONE/3.0/J-PE03_a'})
     assert not ua.is_3g(), 'Invalid generation'
     assert ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
     assert ua.supports_cookie() == False
+    assert ua.vendor == 'PE', ua.vendor
 
 def test_jphone_4_0():
-    ua = detect(Environ('J-PHONE/4.0/J-SH51/SNJSHA3029293 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0'))
+    ua = detect({'HTTP_USER_AGENT':'J-PHONE/4.0/J-SH51/SNJSHA3029293 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0'})
     assert not ua.is_type_c(), 'Invalid type %s' % ua.version
     assert ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert not ua.is_type_w(), 'Invalid type' % ua.version
     assert ua.supports_cookie() == False
+    assert ua.vendor == 'SH'
 
 def test_jphone_5_0():
-    ua = detect(Environ('J-PHONE/5.0/V801SA'))
+    ua = detect({'HTTP_USER_AGENT':'J-PHONE/5.0/V801SA'})
     assert not ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
     assert ua.is_type_w(), 'Invalid type' % ua.version
     assert ua.supports_cookie() == True
+    assert ua.vendor == 'SA'
 
 def test_vodafone_1_0():
-    ua = detect(Environ('Vodafone/1.0/V702NK/NKJ001 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1'))
+    ua = detect({'HTTP_USER_AGENT':'Vodafone/1.0/V702NK/NKJ001 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1'})
     assert ua.is_3g(), 'Invalid generation'
     assert not ua.is_type_c(), 'Invalid type %s' % ua.version
     assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
@@ -166,7 +170,7 @@ def test_yahoo_crawler():
 def test_error_agents():
     def tester(useragent):
         try:
-            ua = detect(Environ(useragent))
+            ua = detect({'HTTP_USER_AGENT':useragent})
         except exceptions.NoMatchingError:
             pass
         else:

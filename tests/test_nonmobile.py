@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from tests import msg, MockWSGIEnviron as Environ
+from tests import msg
 from uamobile import detect, NonMobile
 
 def test_empty_useragent():
@@ -12,7 +12,7 @@ def test_empty_useragent():
 
 def test_useragent_nonmobile():
     def inner(useragent):
-        ua = detect(Environ(useragent))
+        ua = detect({'HTTP_USER_AGENT':useragent})
         assert isinstance(ua, NonMobile)
         assert ua.carrier == 'NonMobile'
         assert ua.short_carrier == 'N'
@@ -23,11 +23,11 @@ def test_useragent_nonmobile():
         assert ua.is_jphone() == False
         assert ua.is_willcom() == False
         assert ua.is_nonmobile()
-        assert ua.display is not None       
+        assert ua.display is not None
         assert ua.supports_cookie() == True
 
         assert ua.serialnumber is None
-        
+
     for ua in DATA:
         yield inner, ua
 

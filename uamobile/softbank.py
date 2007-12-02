@@ -3,8 +3,6 @@ from uamobile import exceptions
 from uamobile.base import UserAgent, Display
 import re
 
-MODEL_VERSION_RE = re.compile(r'^([a-z]+)((?:[a-z]|\d){4})$', re.I)
-
 VODAFONE_VENDOR_RE = re.compile(r'V\d+([A-Z]+)')
 JPHONE_VENDOR_RE = re.compile(r'J-([A-Z]+)')
 
@@ -140,11 +138,9 @@ class SoftBankUserAgent(UserAgent):
                 raise exceptions.NoMatchingError(self)
             self.serialnumber = serial[2:]
 
-        matcher = MODEL_VERSION_RE.match(vendor_version or '')
-        if not matcher:
+        if not vendor_version:
             raise exceptions.NoMatchingError(self)
-
-        self.vendor, self.vendor_version = matcher.groups()
+        self.vendor, self.vendor_version = vendor_version[:-4], vendor_version[-4:]
 
         self.java_info.update([x.split('/') for x in ua[2:]])
 
