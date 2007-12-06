@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from tests import msg
-from uamobile import detect, DoCoMo
+from uamobile import detect, DoCoMo, exceptions
 
 def test_useragent_docomo():
     def inner(useragent, version, html_version, model, cache_size,
@@ -16,6 +16,7 @@ def test_useragent_docomo():
         assert ua.is_willcom() == False
         assert ua.is_nonmobile() == False, ua
 
+        assert ua.version == version
         assert ua.html_version == html_version, msg(ua, ua.html_version, html_version)
         assert ua.model == model, (ua, model)
         assert ua.cache_size == cache_size, (ua, cache_size)
@@ -44,6 +45,61 @@ def test_useragent_docomo():
 
     for args in DATA:
         yield ([inner] + list(args))
+
+def test_display_bytes():
+    ua = detect({'HTTP_USER_AGENT':'DoCoMo/1.0/F505i/c20/TB/W20H10'})
+    assert ua.display.width_bytes == 20
+    assert ua.display.height_bytes == 10
+
+    ua = detect({'HTTP_USER_AGENT':'DoCoMo/2.0 SO905i(c100;TB;W24H18)'})
+    assert ua.display.width_bytes == 24
+    assert ua.display.height_bytes == 18
+
+def test_not_matching_error():
+    def func(ua):
+        try:
+            detect({'HTTP_USER_AGENT': ua})
+        except exceptions.NoMatchingError:
+            pass
+        else:
+            assert False, ua
+
+    # No parenthis
+    yield (func, 'DoCoMo/2.0 SO905i(c100;TB;W24H18')
+
+    # invalid comment
+    yield (func, 'DoCoMo/2.0 SO905i()')
+    yield (func, 'DoCoMo/2.0 N902iS(ser0123456789abcdf;)')
+
+    # Invalid Cache Size
+    yield (func, 'DoCoMo/1.0/F505i/ca/TB/W20H10')
+    yield (func, 'DoCoMo/2.0 SO905i(ca;TB;W24H18')
+
+    # Invalid State
+    yield (func, 'DoCoMo/2.0 SO905i(c100;XX;W24H18')
+
+    # Invalid Display width
+    yield (func, 'DoCoMo/2.0 SO905i(c100;XX;WspamHegg')
+
+    # Invalid serial number
+    yield (func, 'DoCoMo/2.0 N902iS(c100;TB;W24H12;ser0123456789abcd;icc8888888888888888888F)')
+
+    # Invalid card id
+    yield (func, 'DoCoMo/2.0 N902iS(c100;TB;W24H12;ser0123456789abcdf;icc8888888888888888888)')
+
+    # Is this OK???
+    detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 SO905i(c100;TB)'})
+    detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 SO905i(c100)'})
+
+    # This is OK
+    detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 N902iS(c100;TB;W24H12;ser0123456789abcdf;icc8888888888888888888F)'})
+
+    # This useragent does not exist in the real world, pass our test
+    detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 N902iS(ser0123456789abcdf;icc8888888888888888888F;c100;TB;W24H12)'})
+    detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 N902iS(ser0123456789abcdf;icc8888888888888888888F;c100)'})
+    detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 N902iS(ser0123456789abcdf;icc8888888888888888888F)'})
+    detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 N902iS(ser0123456789abcdf)'})
+
 
 #########################
 # Test data
@@ -132,7 +188,7 @@ DATA = (
 ('DoCoMo/2.0 P851i(c100;TB;W24H12)', '2.0', '5.0', 'P851i', 100, True, 'P', '851i', { 'status':'TB' }, (240, 270)),
 ('DoCoMo/2.0 D701iWM(c100;TB;W23H12)', '2.0', '5.0', 'D701iWM', 100, True, 'D', '701i', { 'status':'TB' }, (230, 240)),
 ('DoCoMo/2.0 SH902i(c100;TB;W24H12)', '2.0', '6.0', 'SH902i', 100, True, 'SH', '902i', { 'status':'TB' }, (240, 240)),
-('DoCoMo/2.0 NM850iG(c100;TB;W22H10;ser000000000000000;icc)', '2.0', '4.0', 'NM850iG', 100, True, 'NM', '850i', { 'status':'TB' }, (176, 144)),
+('DoCoMo/2.0 NM850iG(c100;TB;W22H10)', '2.0', '4.0', 'NM850iG', 100, True, 'NM', '850i', { 'status':'TB' }, (176, 144)),
 ('DoCoMo/2.0 N703imyu(c100;TB;W24H12)', '2.0', '7.0', 'N703imyu', 100, True, 'N', '703i', { 'status':'TB' }, (240, 270)),
 ('DoCoMo/2.0 P703imyu(c100;TB;W24H12)', '2.0', '6.0', 'P703imyu', 100, True, 'P', '703i', { 'status':'TB' }, (240, 270)),
 ('DoCoMo/2.0 SH904i(c100;TB;W24H16)', '2.0', '7.0', 'SH904i', 100, True, 'SH', '904i', { 'status':'TB' }, (240, 320)),
