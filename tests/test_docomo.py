@@ -100,6 +100,14 @@ def test_not_matching_error():
     detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 N902iS(ser0123456789abcdf;icc8888888888888888888F)'})
     detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 N902iS(ser0123456789abcdf)'})
 
+def test_crawler():
+    def func(agent):
+        ua = detect({'HTTP_USER_AGENT':agent})
+        assert ua.is_docomo()
+
+    data = ('DoCoMo/2.0 N902iS(c100;TB;W24H12)(compatible; moba-crawler; http://crawler.dena.jp/)',)
+    for agent in data:
+        yield (func, agent)
 
 #########################
 # Test data

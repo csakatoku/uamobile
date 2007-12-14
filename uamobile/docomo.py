@@ -143,7 +143,7 @@ class DoCoMoUserAgent(UserAgent):
                 # DoCoMo/2.0 N2001(c10;ser0123456789abcde;icc01234567890123456789)
                 self._is_foma = True
                 xxx, self.version = main.split('/')
-                self._parse_foma(foma_or_comment[:-1])
+                self._parse_foma(foma_or_comment)
 
     def _parse_main(self, main):
         """
@@ -188,6 +188,10 @@ class DoCoMoUserAgent(UserAgent):
 
         if self.model == 'MST_v_SH2101V':
             self.model = 'SH2101V'
+
+        # for crawlers, such as
+        # DoCoMo/2.0 N902iS(c100;TB;W24H12)(compatible; moba-crawler; http://crawler.dena.jp/)
+        foma_params = foma_params.split(')', 1)[0]
 
         for value in foma_params.split(';'):
             if value in STATUS_SET:
