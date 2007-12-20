@@ -218,4 +218,3 @@ class DoCoMoUserAgent(UserAgent):
                 self._display_bytes = matcher.groups()
                 continue
 
-            raise exceptions.NoMatchingError(self)

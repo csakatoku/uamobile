@@ -68,8 +68,15 @@ def test_not_matching_error():
     yield (func, 'DoCoMo/2.0 SO905i(c100;TB;W24H18')
 
     # invalid comment
-    yield (func, 'DoCoMo/2.0 SO905i()')
-    yield (func, 'DoCoMo/2.0 N902iS(ser0123456789abcdf;)')
+    ua = detect({'HTTP_USER_AGENT':'DoCoMo/2.0 SO905i()'})
+    assert ua.is_docomo()
+    assert ua.serialnumber is None
+    assert ua.card_id is None
+
+    ua = detect({'HTTP_USER_AGENT':'DoCoMo/2.0 N902iS(ser0123456789abcdf;)'})
+    assert ua.is_docomo()
+    assert ua.serialnumber is not None
+    assert ua.card_id is None
 
     # Invalid Cache Size
     yield (func, 'DoCoMo/1.0/F505i/ca/TB/W20H10')
@@ -82,10 +89,16 @@ def test_not_matching_error():
     yield (func, 'DoCoMo/2.0 SO905i(c100;XX;WspamHegg')
 
     # Invalid serial number
-    yield (func, 'DoCoMo/2.0 N902iS(c100;TB;W24H12;ser0123456789abcd;icc8888888888888888888F)')
+    ua = detect({'HTTP_USER_AGENT':'DoCoMo/2.0 N902iS(c100;TB;W24H12;ser0123456789abcd;icc8888888888888888888F)'})
+    assert ua.is_docomo()
+    assert ua.serialnumber is None
+    assert ua.card_id is not None
 
     # Invalid card id
-    yield (func, 'DoCoMo/2.0 N902iS(c100;TB;W24H12;ser0123456789abcdf;icc8888888888888888888)')
+    ua = detect({'HTTP_USER_AGENT':'DoCoMo/2.0 N902iS(c100;TB;W24H12;ser0123456789abcdf;icc8888888888888888888)'})
+    assert ua.is_docomo()
+    assert ua.serialnumber is not None
+    assert ua.card_id is None
 
     # Is this OK???
     detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 SO905i(c100;TB)'})
@@ -105,7 +118,8 @@ def test_crawler():
         ua = detect({'HTTP_USER_AGENT':agent})
         assert ua.is_docomo()
 
-    data = ('DoCoMo/2.0 N902iS(c100;TB;W24H12)(compatible; moba-crawler; http://crawler.dena.jp/)',)
+    data = ('DoCoMo/2.0 N902iS(c100;TB;W24H12)(compatible; moba-crawler; http://crawler.dena.jp/)',
+            'DoCoMo/2.0 SH902i (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)',)
     for agent in data:
         yield (func, agent)
 
