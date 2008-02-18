@@ -15,14 +15,13 @@ class WillcomUserAgent(UserAgent):
     def __init__(self, *args, **kwds):
         UserAgent.__init__(self, *args, **kwds)
         self.vendor = ''
-        self.model = ''
         self.model_version = ''
         self.browser_version = ''
         self.cache_size = None
 
         # WILLCOM does not support the serial number of a device
         # except official web sites?
-        self.serialnumber = None        
+        self.serialnumber = None
 
     def supports_cookie(self):
         # TODO

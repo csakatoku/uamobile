@@ -11,6 +11,7 @@ class UserAgent(object):
         except KeyError, e:
             self.useragent = ''
         self.environ = environ
+        self.model = ''
         self.version = ''
         self._display = None
 
@@ -19,17 +20,6 @@ class UserAgent(object):
 
     def __str__(self):
         return self.useragent
-
-    def getheader(self, key, default=None):
-        """
-        Gets the header for the given key.
-        note that this method is deprecated.
-        """
-        import warnings
-        warnings.warn("The method 'getheader' is deprecated. Use the 'environ' property.",
-                      category=DeprecationWarning,
-                      stacklevel=2)
-        return self.environ.get(key, default)
 
     def get_display(self):
         """
@@ -105,17 +95,6 @@ class UserAgent(object):
         returns True if the agent supports HTTP cookie.
         """
         raise NotImplementedError
-
-    def is_cookie_available(self):
-        """
-        returns True if the agent supports HTTP cookie.
-        note that this methid is deprecated.
-        """
-        import warnings
-        warnings.warn("The method 'is_cookie_available' is deprecated. Use supports_cookie instead.",
-                      category=DeprecationWarning,
-                      stacklevel=2)
-        return self.supports_cookie()
 
 class Display(object):
     """

@@ -12,7 +12,6 @@ class SoftBankUserAgent(UserAgent):
 
     def __init__(self, *args, **kwds):
         UserAgent.__init__(self, *args, **kwds)
-        self.model = ''
         self.packet_compliant = False
         self.serialnumber = None
         self.vendor = ''

@@ -14,7 +14,6 @@ class EZwebUserAgent(UserAgent):
         UserAgent.__init__(self, *args, **kwds)
         self._comment = None
         self.xhtml_compliant = False
-        self.model = ''
         self.device_id = ''
         self.server = ''
 

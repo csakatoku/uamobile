@@ -47,7 +47,6 @@ class DoCoMoUserAgent(UserAgent):
 
     def __init__(self, *args, **kwds):
         UserAgent.__init__(self, *args, **kwds)
-        self.model = ''
         self.version = ''
         self.bandwidth = None
         self.serialnumber = None
