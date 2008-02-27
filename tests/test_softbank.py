@@ -167,6 +167,16 @@ def test_yahoo_crawler():
     assert not ua.is_type_w(), 'Invalid type' % ua.version
     assert ua.supports_cookie() == False
 
+def test_crawler():
+    def func(useragent):
+        ua = detect({'HTTP_USER_AGENT':useragent})
+        assert ua.is_softbank()
+    for useragent in ('Vodafone/1.0/V802SH/SHJ002 Browser/UP.Browser/7.0.2.1 (compatible; ichiro/mobile goo; +http://help.goo.ne.jp/door/crawler.html)',
+                      'J-PHONE/3.0/J-SH10 (compatible; LD_mobile_bot; +http://helpguide.livedoor.com/help/search/qa/grp627)',
+                      'SoftBank/1.0/913SH/SHJ001/SN000123456789000 Browser/NetFront/3.4 Profile/MIDP-2.0 (symphonybot1.froute.jp; +http://search.froute.jp/howto/crawler.html)',
+                      ):
+        yield func, useragent
+
 def test_error_agents():
     def tester(useragent):
         try:

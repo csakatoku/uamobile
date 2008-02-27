@@ -9,9 +9,17 @@ def test_netfront_nonmobile_mode():
     assert ua.version == '6.2.0.11.2.1 (GUI)'
     assert ua.server == 'MMP/2.0'
 
-def test_yahooo_crawler():
-    ua = detect({'HTTP_USER_AGENT':'KDDI-CA23 UP.Browser/6.2.0.5 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)'})
-    assert ua.is_ezweb()
+def test_crawler():
+    def func(useragent):
+        ua = detect({'HTTP_USER_AGENT': useragent})
+        assert ua.is_ezweb()
+
+    for useragent in ('KDDI-CA23 UP.Browser/6.2.0.5 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)',
+                      'KDDI-CA31 UP.Browser/6.2.0 (GUI) (compatible; ichiro/mobile goo; +http://help.goo.ne.jp/door/crawler.html)',
+                      'KDDI-HI31 UP.Browser/6.2.0.5 (GUI) MMP/2.0 (compatible; LD_mobile_bot; +http://helpguide.livedoor.com/help/search/qa/grp627)',
+                      'KDDI-SH32 UP.Browser/6.2.0.6.2 (GUI) MMP/2.0 (symphonybot1.froute.jp; +http://search.froute.jp/howto/crawler.html)',
+                      ):
+        yield func, useragent
 
 def test_no_subscription_id():
     ua = detect({'HTTP_USER_AGENT': 'KDDI-SA35 UP.Browser/6.2.0.9.1 (GUI) MMP/2.0'})

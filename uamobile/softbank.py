@@ -5,6 +5,7 @@ import re
 
 VODAFONE_VENDOR_RE = re.compile(r'V\d+([A-Z]+)')
 JPHONE_VENDOR_RE = re.compile(r'J-([A-Z]+)')
+CRAWLER_RE = re.compile(r'^(.+?)\([^)]+\)$')
 
 class SoftBankUserAgent(UserAgent):
     carrier = 'SoftBank'
@@ -71,7 +72,14 @@ class SoftBankUserAgent(UserAgent):
     jphone_uid = property(get_jphone_uid)
 
     def parse(self):
-        ua = self.useragent.split(' ')
+        """
+        parse the useragent which starts with "SoftBank", "Vodafone", "J-PHONE", or "MOT-".
+        """
+        # strip crawler infomation such as,
+        # J-PHONE/2.0/J-SH03 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)
+        # SoftBank/1.0/913SH/SHJ001/SN000123456789000 Browser/NetFront/3.4 Profile/MIDP-2.0 (symphonybot1.froute.jp; +http://search.froute.jp/howto/crawler.html)
+        ua = CRAWLER_RE.sub(r'\1', self.useragent)
+        ua = ua.strip().split(' ')
 
         carrier = ua[0]
         if carrier.startswith('SoftBank') or carrier.startswith('Vodafone'):
@@ -137,11 +145,12 @@ class SoftBankUserAgent(UserAgent):
             raise exceptions.NoMatchingError(self)
         self.vendor, self.vendor_version = vendor_version[:-4], vendor_version[-4:]
 
-        self.java_info.update([x.split('/') for x in ua[2:]])
+        print [x.split('/') for x in ua[2:]]
+        self.java_info.update([x.split('/') for x in ua[2:] if x])
 
     def _parse_jphone(self, ua):
         self._is_3g = False
-        if len(ua) > 1 and not ua[1].startswith('('):
+        if len(ua) > 1:
             # J-PHONE/4.0/J-SH51/SNJSHA3029293 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0
             self.packet_compliant = True
             (self.name,
@@ -160,7 +169,6 @@ class SoftBankUserAgent(UserAgent):
             self.java_info.update([x.split('/') for x in ua[2:]])
         else:
             # J-PHONE/2.0/J-DN02
-            # J-PHONE/2.0/J-SH03 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)
             self.name, self.version, self.model = ua[0].split('/')
             if self.model:
                 matcher = VODAFONE_VENDOR_RE.match(self.model)

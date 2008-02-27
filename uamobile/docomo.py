@@ -190,6 +190,8 @@ class DoCoMoUserAgent(UserAgent):
 
         # for crawlers, such as
         # DoCoMo/2.0 N902iS(c100;TB;W24H12)(compatible; moba-crawler; http://crawler.dena.jp/)
+        # DoCoMo/2.0 P900i(c100;TB;W24H11)(compatible; ichiro/mobile goo; +http://help.goo.ne.jp/door/crawler.html)
+        # DoCoMo/2.0 SO902i(c100;TB;W20H10) (symphonybot1.froute.jp; +http://search.froute.jp/howto/crawler.html)
         foma_params = foma_params.split(')', 1)[0]
 
         for value in foma_params.split(';'):
