@@ -227,5 +227,15 @@ DATA = (
 ('DoCoMo/2.0 F905i(c100;TB;W24H17)', '2.0', '7.1', 'F905i', 100, True, 'F', '905i', {'status':'TB'}, (240, 352)),
 ('DoCoMo/2.0 SO905i(c100;TB;W24H18)', '2.0', '7.1', 'SO905i', 100, True, 'SO', '905i', {'status':'TB'}, (240, 368)),
 ('DoCoMo/2.0 N905imyu(c100;TB;W24H16)', '2.0', '7.1', 'N905imyu', 100, True, 'N', '905i', {'status':'TB'}, (240, 320)),
+
+# Added 2008/2/27
+('DoCoMo/2.0 SO905iCS(c100;TB;W24H18)', '2.0', '7.1', 'SO905iCS', 100, True, 'SO', '905i', {'status':'TB'}, (240, 368)),
+('DoCoMo/2.0 F905iBiz(c100;TB;W24H17)', '2.0', '7.1', 'F905iBiz', 100, True, 'F', '905i', {'status':'TB'}, (240, 352)),
+
+('DoCoMo/2.0 P705i(c100;TB;W24H15)', '2.0', '7.1', 'P705i', 100, True, 'P', '705i', {'status':'TB'}, (240, 350)),
+('DoCoMo/2.0 P705imyu(c100;TB;W24H15)', '2.0', '7.1', 'P705imyu', 100, True, 'P', '705i', {'status':'TB'}, (240, 350)),
+('DoCoMo/2.0 N705i(c100;TB;W24H16)', '2.0', '7.1', 'N705i', 100, True, 'N', '705i', {'status':'TB'}, (240, 320)),
+('DoCoMo/2.0 N705imyu(c100;TB;W24H16)', '2.0', '7.1', 'N705imyu', 100, True, 'N', '705i', {'status':'TB'}, (240, 320)),
+('DoCoMo/2.0 SO705i(c100;TB;W24H16)', '2.0', '7.1', 'SO705i', 100, True, 'SO', '705i', {'status':'TB'}, (240, 320)),
 )
 
