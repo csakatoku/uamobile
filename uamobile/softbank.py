@@ -145,7 +145,6 @@ class SoftBankUserAgent(UserAgent):
             raise exceptions.NoMatchingError(self)
         self.vendor, self.vendor_version = vendor_version[:-4], vendor_version[-4:]
 
-        print [x.split('/') for x in ua[2:]]
         self.java_info.update([x.split('/') for x in ua[2:] if x])
 
     def _parse_jphone(self, ua):
