@@ -55,6 +55,13 @@ def test_display_bytes():
     assert ua.display.width_bytes == 24
     assert ua.display.height_bytes == 18
 
+def test_guid():
+    ua = detect({'HTTP_USER_AGENT':'DoCoMo/2.0 SO905i(c100;TB;W24H18)', 'HTTP_X_DCMGUID':'FFFFFFF'})
+    assert ua.guid == 'FFFFFFF'
+
+    ua = detect({'HTTP_USER_AGENT':'DoCoMo/2.0 SO905i(c100;TB;W24H18)'})
+    assert ua.guid is None
+
 def test_not_matching_error():
     def func(ua):
         try:

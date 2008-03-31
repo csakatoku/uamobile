@@ -109,6 +109,17 @@ class DoCoMoUserAgent(UserAgent):
     def supports_cookie(self):
         return False
 
+    def get_guid(self):
+        """
+        Get iMode ID(guid). For iMode ID, see
+        http://www.nttdocomo.co.jp/service/imode/make/content/ip/index.html#imodeid
+        """
+        try:
+            return self.environ['HTTP_X_DCMGUID']
+        except KeyError:
+            return None
+    guid = property(get_guid)
+
     def make_display(self):
         """
         create a new Display object.
