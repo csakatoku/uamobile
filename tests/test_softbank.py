@@ -212,6 +212,7 @@ DATA = (
     ('J-PHONE/3.0/V301SH', '3.0', 'V301SH', False),
     ('J-PHONE/3.0/V301T', '3.0', 'V301T', False),
     ('SoftBank/1.0/705P/PJP10 Browser/Teleca-Browser/3.1 Profile/MIDP-2.0 Configuration/CLDC-1.1', '1.0', '705P', True, None, 'P', 'JP10', {'Profile' : 'MIDP-2.0', 'Configuration' : 'CLDC-1.1'}),
+    ('SoftBank/1.0/DM001SH/SHJ001/SN123456789012345 Browser/NetFront/3.4 Profile/MIDP-2.0 Configuration/CLDC-1.1', '1.0', 'DM001SH', True, '123456789012345', 'SH', 'J001', {'Profile': 'MIDP-2.0', 'Configuration': 'CLDC-1.1'}),
 )
 
 ERRORS = ('J-PHONE/4.0/J-SH51_a/ZNJSHA5081372 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0',
