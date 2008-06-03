@@ -24,7 +24,7 @@ Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware
 """.splitlines())),
       keywords='',
       author='Chihio Sakatoku',
-      author_email='csakatoku@mac.com',
+      author_email='csakatoku@gmail.com',
       url='http://code.google.com/p/wsgiuseragentmobile/',
       license='MIT License',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
