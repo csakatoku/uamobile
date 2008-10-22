@@ -159,13 +159,20 @@ def test_vodafone_1_0():
     assert ua.supports_cookie() == True
 
 def test_yahoo_crawler():
-    ua = detect({'HTTP_USER_AGENT':'J-PHONE/2.0/J-SH03 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)'})
-    assert ua.is_softbank()
-    assert not ua.is_3g(), 'Invalid generation'
-    assert ua.is_type_c(), 'Invalid type %s' % ua.version
-    assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
-    assert not ua.is_type_w(), 'Invalid type' % ua.version
-    assert ua.supports_cookie() == False
+    def func(useragent, is_3g, model, cookie):
+        ua = detect({'HTTP_USER_AGENT': useragent})
+        assert ua.is_softbank()
+        assert ua.is_3g() == is_3g, 'Invalid generation'
+        assert not ua.is_type_p(), 'Invalid type %s'  % ua.version
+        assert not ua.is_type_w(), 'Invalid type' % ua.version
+        assert ua.model == model
+        assert ua.supports_cookie() == cookie
+
+    for u, model, is_3g, cookie in (
+        ('J-PHONE/2.0/J-SH03 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)', False, 'J-SH03', False),
+        ('Vodafone/1.0/V705SH (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)', True, 'V705SH', True),
+        ):
+        yield func, u, model, is_3g, cookie
 
 def test_crawler():
     def func(useragent):
@@ -184,7 +191,7 @@ def test_error_agents():
         except exceptions.NoMatchingError:
             pass
         else:
-            raise 'NoMatchingError expected'
+            assert False, 'NoMatchingError expected'
     for datum in ERRORS:
         yield tester, datum
 
@@ -216,6 +223,6 @@ DATA = (
 )
 
 ERRORS = ('J-PHONE/4.0/J-SH51_a/ZNJSHA5081372 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0',
-          'Vodafone/1.0/V702NK',
+          #'Vodafone/1.0/V702NK',
           'Vodafone/1.0/V702NK/NKJ001/123456789012345 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1',
           )

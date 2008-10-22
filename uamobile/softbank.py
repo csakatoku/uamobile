@@ -77,6 +77,7 @@ class SoftBankUserAgent(UserAgent):
         """
         # strip crawler infomation such as,
         # J-PHONE/2.0/J-SH03 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)
+        # Vodafone/1.0/V705SH (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)
         # SoftBank/1.0/913SH/SHJ001/SN000123456789000 Browser/NetFront/3.4 Profile/MIDP-2.0 (symphonybot1.froute.jp; +http://search.froute.jp/howto/crawler.html)
         ua = CRAWLER_RE.sub(r'\1', self.useragent)
         ua = ua.strip().split(' ')
@@ -129,6 +130,7 @@ class SoftBankUserAgent(UserAgent):
         # Vodafone/1.0/V702NK/NKJ001 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1
         # Vodafone/1.0/V702NK/NKJ001/SN123456789012345 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1
         # Vodafone/1.0/V802SE/SEJ001/SN123456789012345 Browser/SEMC-Browser/4.1 Profile/MIDP-2.0 Configuration/CLDC-1.1
+        # Vodafone/1.0/V705SH (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)
 
         (self.name,
          self.version,
@@ -142,8 +144,10 @@ class SoftBankUserAgent(UserAgent):
             self.serialnumber = serial[2:]
 
         if not vendor_version:
-            raise exceptions.NoMatchingError(self)
-        self.vendor, self.vendor_version = vendor_version[:-4], vendor_version[-4:]
+            self.vendor = ''
+            self.vendor_version = ''
+        else:
+            self.vendor, self.vendor_version = vendor_version[:-4], vendor_version[-4:]
 
         self.java_info.update([x.split('/') for x in ua[2:] if x])
 
