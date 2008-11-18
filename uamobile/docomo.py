@@ -16,7 +16,7 @@ DISPLAY_BYTES_RE = re.compile(r'^W(\d+)H(\d+)$')
 VENDOR_RE = re.compile(r'([A-Z]+)\d')
 
 FOMA_SERIES_4DIGITS_RE = re.compile(r'\d{4}')
-FOMA_SERIES_3DIGITS_RE = re.compile(r'(\d{3}i)')
+FOMA_SERIES_3DIGITS_RE = re.compile(r'(\d{3}i|\d{2}[ABC])')
 
 class DoCoMoUserAgent(UserAgent):
     """
@@ -43,7 +43,7 @@ class DoCoMoUserAgent(UserAgent):
                          (re.compile('902i|702i|851iWM|882i|883i$|^N601i$|^D800iDS$|^P70[34]imyu$'), '6.0'),
                          (re.compile('883iES|903i|703i|904i|704i'), '7.0'),
                          (re.compile('905i|705i'), '7.1'),
-                         (re.compile('906i'), '7.2'),
+                         (re.compile('906i|0[13]A'), '7.2'),
                          ))
 
     def __init__(self, *args, **kwds):

@@ -269,4 +269,9 @@ DISPLAYMAP_DOCOMO = {'D209i': {'color': 1, 'depth': 256, 'height': 90, 'width': 
  'SO905i': {'color': 1, 'depth': 16777216, 'height': 368, 'width': 240},
  'SO905iCS': {'color': 1, 'depth': 16777216, 'height': 368, 'width': 240},
  'SO906i': {'color': 1, 'depth': 16777216, 'height': 368, 'width': 240},
- 'T2101V': {'color': 1, 'depth': 262144, 'height': 144, 'width': 176}}
+ 'T2101V': {'color': 1, 'depth': 262144, 'height': 144, 'width': 176},
+ 'F01A': {'color': 1, 'depth': 16777216, 'height': 352, 'width': 240},
+ 'P01A': {'color': 1, 'depth': 262144, 'height': 350, 'width': 240},
+ 'N03A': {'color': 1, 'depth': 262144, 'height': 320, 'width': 240},
+ 'SH01A': {'color': 1, 'depth': 16777216, 'height': 320, 'width': 240},
+}

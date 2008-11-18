@@ -17,8 +17,8 @@ def test_useragent_docomo():
         assert ua.is_nonmobile() == False, ua
 
         assert ua.version == version
-        assert ua.html_version == html_version, msg(ua, ua.html_version, html_version)
         assert ua.model == model, (ua, model)
+        assert ua.html_version == html_version, msg(ua, ua.html_version, html_version)
         assert ua.cache_size == cache_size, (ua, cache_size)
         assert ua.is_foma() == is_foma, (ua, is_foma)
         assert ua.vendor == vendor, (ua, vendor)
@@ -251,5 +251,10 @@ DATA = (
 ('DoCoMo/2.0 SH906i(c100;TB;W24H16)', '2.0', '7.2', 'SH906i', 100, True, 'SH', '906i', {'status':'TB'}, (240, 320)),
 ('DoCoMo/2.0 N906imyu(c100;TB;W24H16)', '2.0', '7.2', 'N906imyu', 100, True, 'N', '906i', {'status':'TB'}, (240, 320)),
 ('DoCoMo/2.0 F906i(c100;TB;W24H17)', '2.0', '7.2', 'F906i', 100, True, 'F', '906i', {'status':'TB'}, (240, 352)),
-)
 
+# Added 2008/11/8
+('DoCoMo/2.0 F01A(c100;TB;W24H17)', '2.0', '7.2', 'F01A', 100, True, 'F', '01A', {'status':'TB'}, (240, 352)),
+('DoCoMo/2.0 P01A(c100;TB;W24H15)', '2.0', '7.2', 'P01A', 100, True, 'P', '01A', {'status':'TB'}, (240, 350)),
+('DoCoMo/2.0 N03A(c100;TB;W24H16)', '2.0', '7.2', 'N03A', 100, True, 'N', '03A', {'status':'TB'}, (240, 320)),
+('DoCoMo/2.0 SH01A(c100;TB;W24H16)', '2.0', '7.2', 'SH01A', 100, True, 'SH', '01A', {'status':'TB'}, (240, 320)),
+)
