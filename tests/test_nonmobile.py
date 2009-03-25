@@ -31,6 +31,23 @@ def test_useragent_nonmobile():
     for ua in DATA:
         yield inner, ua
 
+
+def test_display_default():
+    ua = detect({'HTTP_USER_AGENT':'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.4) Gecko/2008102920 Firefox/3.0.4'})
+    assert ua.display.width != 0
+    assert ua.display.height != 0
+    assert ua.display.color
+    assert ua.display.depth
+    assert ua.display.is_vga() is False
+    assert ua.display.is_qvga() is True
+
+
+def test_strip_serialnumber():
+    value = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.4) Gecko/2008102920 Firefox/3.0.4'
+    ua = detect({'HTTP_USER_AGENT': value})
+    assert ua.strip_serialnumber() == value
+
+
 #########################
 # Test data
 #########################

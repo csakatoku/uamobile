@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from tests import msg
-from uamobile import detect, DoCoMo, exceptions
+from uamobile import detect, Context
+from uamobile.docomo import DoCoMoUserAgent
+from uamobile.factory.docomo import DoCoMoUserAgentFactory
 
 def test_useragent_docomo():
     def inner(useragent, version, html_version, model, cache_size,
@@ -8,7 +10,6 @@ def test_useragent_docomo():
 
         ua = detect({'HTTP_USER_AGENT':useragent})
         assert ua.is_docomo()
-        assert isinstance(ua, DoCoMo)
         assert ua.is_ezweb() == False
         assert ua.is_softbank() == False
         assert ua.is_vodafone() == False
@@ -46,6 +47,16 @@ def test_useragent_docomo():
     for args in DATA:
         yield ([inner] + list(args))
 
+def test_display_default():
+    # the following User-Agent doesn't exist at least in spring 2009
+    ua = detect({'HTTP_USER_AGENT':'DoCoMo/2.0 SH99A(c100;TB;W24H16)'})
+    assert ua.display.width != 0
+    assert ua.display.height != 0
+    assert ua.display.color
+    assert ua.display.depth
+    assert ua.display.is_vga() is False
+    assert ua.display.is_qvga() is True
+
 def test_display_bytes():
     ua = detect({'HTTP_USER_AGENT':'DoCoMo/1.0/F505i/c20/TB/W20H10'})
     assert ua.display.width_bytes == 20
@@ -62,14 +73,28 @@ def test_guid():
     ua = detect({'HTTP_USER_AGENT':'DoCoMo/2.0 SO905i(c100;TB;W24H18)'})
     assert ua.guid is None
 
+def test_strip_serialnumber():
+    value = 'DoCoMo/2.0 N904i(c100;TB;W24H16)'
+    ua = detect({'HTTP_USER_AGENT': value})
+    assert ua.strip_serialnumber() == value
+
+    value = 'DoCoMo/1.0/SO213i/c10/TB/serSSSSS555555'
+    ua = detect({'HTTP_USER_AGENT': value})
+    assert ua.strip_serialnumber() == 'DoCoMo/1.0/SO213i/c10/TB'
+
+    ua = detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 N702iD(c100;TB;W24H12;ser356623000314657;icc8981100000327921096F)'})
+    assert ua.strip_serialnumber() == 'DoCoMo/2.0 N702iD(c100;TB;W24H12)', repr(ua.strip_serialnumber())
+
+    ua = detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 N702iD(c100;ser356623000314657;TB;icc8981100000327921096F;W24H12)'})
+    assert ua.strip_serialnumber() == 'DoCoMo/2.0 N702iD(c100;TB;W24H12)', repr(ua.strip_serialnumber())
+
+    ua = detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 N702iD(icc8981100000327921096F;c100;TB;W24H12;ser356623000314657)'})
+    assert ua.strip_serialnumber() == 'DoCoMo/2.0 N702iD(c100;TB;W24H12)', repr(ua.strip_serialnumber())
+
 def test_not_matching_error():
     def func(ua):
-        try:
-            detect({'HTTP_USER_AGENT': ua})
-        except exceptions.NoMatchingError:
-            pass
-        else:
-            assert False, ua
+        device = detect({'HTTP_USER_AGENT': ua})
+        assert device.is_docomo()
 
     # No parenthis
     yield (func, 'DoCoMo/2.0 SO905i(c100;TB;W24H18')
@@ -133,6 +158,122 @@ def test_crawler():
             )
     for agent in data:
         yield (func, agent)
+
+def test_is_bogus():
+    context = Context(proxy_ips='127.0.0.1')
+    def func(remote_addr, forwarded_for, expected):
+        ua = detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 P01A(c100;TB;W24H15)',
+                     'REMOTE_ADDR' : ip,
+                     'HTTP_X_FORWARDED_FOR': forwarded_for,
+                     },
+                    context=context)
+        assert ua.is_docomo()
+        res = ua.is_bogus()
+        assert res == expected, '%s expected, actual %s' % (expected, res)
+
+    for ip, expected in (
+        ('210.153.84.0', False),
+        ('210.230.128.224', True),
+        ):
+        yield func, ip, None, expected
+
+    for ip, f, expected in (
+        # untrusted proxy address
+        ('192.168.0.1', '210.153.84.0', True),
+        ('192.168.0.1', '210.230.128.224', True),
+        ):
+        yield func, ip, f, expected
+
+    for ip, f, expected in (
+        ('127.0.0.1', '210.153.84.0', False),
+        ('127.0.0.1', '210.230.128.224', True),
+
+        ('127.0.0.1', '210.153.84.0, 192.168.0.2', False),
+        ('127.0.0.1', '210.230.128.224, 192.168.0.2', True),
+        ):
+        yield func, ip, f, expected
+
+
+def test_is_bogus_multiple_proxies():
+    context = Context(proxy_ips=['192.168.0.0/24', '192.168.1.0/24'])
+    ua = detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 P01A(c100;TB;W24H15)',
+                 'REMOTE_ADDR'    : '192.168.0.1',
+                 'HTTP_X_FORWARDED_FOR': '210.153.84.0',
+                 },
+                context=context)
+    assert ua.is_docomo()
+    assert ua.is_bogus() is False
+
+    ua = detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 P01A(c100;TB;W24H15)',
+                 'REMOTE_ADDR'    : '192.168.1.1',
+                 'HTTP_X_FORWARDED_FOR': '210.153.84.0',
+                 },
+                context=context)
+    assert ua.is_docomo()
+    assert ua.is_bogus() is False
+
+    ua = detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 P01A(c100;TB;W24H15)',
+                 'REMOTE_ADDR'    : '192.168.2.1',
+                 'HTTP_X_FORWARDED_FOR': '210.153.84.0',
+                 },
+                context=context)
+    assert ua.is_docomo()
+    assert ua.is_bogus() is True
+
+
+def test_is_bogus_error():
+    context = Context(proxy_ips=['127.0.0.1'])
+    ua = detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 P01A(c100;TB;W24H15)',
+                 'REMOTE_ADDR'    : 'unknown',
+                 },
+                context=context)
+    assert ua.is_docomo()
+    assert ua.is_bogus()
+
+    ua = detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 P01A(c100;TB;W24H15)',
+                 'REMOTE_ADDR'    : '127.0.0.1',
+                 'HTTP_X_FORWARDED_FOR': 'unknown,210.153.84.0',
+                 },
+                context=context)
+    assert ua.is_docomo()
+    assert ua.is_bogus()
+
+def test_extra_ip():
+    ctxt1 = Context(extra_docomo_ips=['192.168.0.0/24'])
+    ua = detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 P01A(c100;TB;W24H15)',
+                 'REMOTE_ADDR'    : '192.168.0.1',
+                 },
+                context=ctxt1)
+    assert ua.is_docomo()
+    assert ua.is_bogus() is False
+
+    ctxt2 = Context(extra_docomo_ips=[])
+    ua = detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 P01A(c100;TB;W24H15)',
+                 'REMOTE_ADDR'    : '192.168.0.1',
+                 },
+                context=ctxt2)
+    assert ua.is_docomo()
+    assert ua.is_bogus() is True
+
+
+def test_my_factory():
+    class MyDoCoMoUserAgent(DoCoMoUserAgent):
+        def get_uid(self):
+            return self.environ.get('HTTP_X_DOCOMO_UID')
+
+    class MyDoCoMoUserAgentFactory(DoCoMoUserAgentFactory):
+        device_class = MyDoCoMoUserAgent
+
+    context = Context(docomo_factory=MyDoCoMoUserAgentFactory)
+    ua = detect({'HTTP_USER_AGENT'  : 'DoCoMo/2.0 P01A(c100;TB;W24H15)',
+                 'REMOTE_ADDR'      : '192.168.0.1',
+                 'HTTP_X_DOCOMO_UID': 'spam',
+                 },
+                context=context)
+    assert ua.is_docomo()
+    assert isinstance(ua, MyDoCoMoUserAgent)
+    assert ua.get_uid() == 'spam'
+
 
 #########################
 # Test data

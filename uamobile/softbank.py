@@ -1,25 +1,10 @@
 # -*- coding: utf-8 -*-
-from uamobile import exceptions
 from uamobile.base import UserAgent, Display
-import re
-
-VODAFONE_VENDOR_RE = re.compile(r'V\d+([A-Z]+)')
-JPHONE_VENDOR_RE = re.compile(r'J-([A-Z]+)')
-CRAWLER_RE = re.compile(r'^(.+?)\([^)]+\)$')
 
 class SoftBankUserAgent(UserAgent):
     carrier = 'SoftBank'
     short_carrier = 'S'
-
-    def __init__(self, *args, **kwds):
-        UserAgent.__init__(self, *args, **kwds)
-        self.packet_compliant = False
-        self.serialnumber = None
-        self.vendor = ''
-        self.vendor_version = None
-        self.java_info = {}
-        self._is_3g = True
-        self.msname = ''
+    serialnumber = None
 
     def supports_cookie(self):
         """
@@ -28,6 +13,15 @@ class SoftBankUserAgent(UserAgent):
         http://www2.developers.softbankmobile.co.jp/dp/tool_dl/download.php?docid=119
         """
         return self.is_3g() or self.is_type_w()
+
+    def strip_serialnumber(self):
+        """
+        strip Device ID(Hardware ID)
+        """
+        if not self.serialnumber:
+            return super(SoftBankUserAgent, self).strip_serialnumber()
+
+        return self.useragent.replace('/SN%s' % self.serialnumber, '')
 
     def is_softbank(self):
         return True
@@ -71,39 +65,17 @@ class SoftBankUserAgent(UserAgent):
             return None
     jphone_uid = property(get_jphone_uid)
 
-    def parse(self):
-        """
-        parse the useragent which starts with "SoftBank", "Vodafone", "J-PHONE", or "MOT-".
-        """
-        # strip crawler infomation such as,
-        # J-PHONE/2.0/J-SH03 (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)
-        # Vodafone/1.0/V705SH (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)
-        # SoftBank/1.0/913SH/SHJ001/SN000123456789000 Browser/NetFront/3.4 Profile/MIDP-2.0 (symphonybot1.froute.jp; +http://search.froute.jp/howto/crawler.html)
-        ua = CRAWLER_RE.sub(r'\1', self.useragent)
-        ua = ua.strip().split(' ')
-
-        carrier = ua[0]
-        if carrier.startswith('SoftBank') or carrier.startswith('Vodafone'):
-            self._parse_vodaphone(ua)
-        elif carrier.startswith('J-PHONE'):
-            self._parse_jphone(ua)
-        elif carrier.startswith('MOT-'):
-            self._parse_motorola(ua)
-        else:
-            raise exceptions.NoMatchingError(self)
-
-        try:
-            self.msname = self.environ['HTTP_X_JPHONE_MSNAME']
-        except KeyError, e:
-            self.msname = None
+    def get_msname(self):
+        return self.environ.get('HTTP_X_JPHONE_MSNAME')
+    msname = property(get_msname)
 
     def make_display(self):
         """
         create a new Display object.
         """
         try:
-            width, height = map(int, self.environ['HTTP_X_JPHONE_DISPLAY'].split('*', 1))
-        except (KeyError, ValueError, AttributeError):
+            width, height = map(int, self.environ.get('HTTP_X_JPHONE_DISPLAY', '').split('*', 1))
+        except (ValueError, AttributeError):
             width = None
             height = None
 
@@ -123,74 +95,3 @@ class SoftBankUserAgent(UserAgent):
             depth = 0
 
         return Display(width=width, height=height, color=color, depth=depth)
-
-    def _parse_vodaphone(self, ua):
-        self.packet_compliant = True
-
-        # Vodafone/1.0/V702NK/NKJ001 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1
-        # Vodafone/1.0/V702NK/NKJ001/SN123456789012345 Series60/2.6 Nokia6630/2.39.148 Profile/MIDP-2.0 Configuration/CLDC-1.1
-        # Vodafone/1.0/V802SE/SEJ001/SN123456789012345 Browser/SEMC-Browser/4.1 Profile/MIDP-2.0 Configuration/CLDC-1.1
-        # Vodafone/1.0/V705SH (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)
-
-        (self.name,
-         self.version,
-         self.model,
-         vendor_version,
-         serial) = (ua[0].split('/') + [None, None, None, None])[:5]
-
-        if serial:
-            if not serial.startswith('SN'):
-                raise exceptions.NoMatchingError(self)
-            self.serialnumber = serial[2:]
-
-        if not vendor_version:
-            self.vendor = ''
-            self.vendor_version = ''
-        else:
-            self.vendor, self.vendor_version = vendor_version[:-4], vendor_version[-4:]
-
-        self.java_info.update([x.split('/') for x in ua[2:] if x])
-
-    def _parse_jphone(self, ua):
-        self._is_3g = False
-        if len(ua) > 1:
-            # J-PHONE/4.0/J-SH51/SNJSHA3029293 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0
-            self.packet_compliant = True
-            (self.name,
-             self.version,
-             self.model,
-             serial) = (ua[0].split('/') + [None, None, None])[:4]
-            if serial:
-                if not serial.startswith('SN'):
-                    raise exceptions.NoMatchingError(self)
-                self.serialnumber = serial[2:]
-
-            try:
-                self.vendor, self.vendor_version = ua[1].split('/')
-            except ValueError, e:
-                raise ValueError(str(ua))
-            self.java_info.update([x.split('/') for x in ua[2:]])
-        else:
-            # J-PHONE/2.0/J-DN02
-            self.name, self.version, self.model = ua[0].split('/')
-            if self.model:
-                matcher = VODAFONE_VENDOR_RE.match(self.model)
-                if matcher:
-                    self.vendor = matcher.group(1)
-                else:
-                    matcher = JPHONE_VENDOR_RE.match(self.model)
-                    if matcher:
-                        self.vendor = matcher.group(1)
-
-    def _parse_motorola(self, ua):
-        """
-        parse HTTP_USER_AGENT string for the Motorola 3G agent
-        """
-        self.packet_compliant = True
-        self.vendor = 'MOT'
-
-        # MOT-V980/80.2F.2E. MIB/2.2.1 Profile/MIDP-2.0 Configuration/CLDC-1.1
-        name, self.vendor_version = ua[0].split('/')
-        self.model = name[name.rindex('-')+1:]
-
-        self.java_info.update([x.split('/') for x in ua[2:]])

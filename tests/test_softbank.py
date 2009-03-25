@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from tests import msg
-from uamobile import detect, exceptions, SoftBank
+from uamobile import detect, Context
+from uamobile.softbank import SoftBankUserAgent
+from uamobile.factory.softbank import SoftBankUserAgentFactory
 
 def test_display():
     env = {'HTTP_USER_AGENT': 'Vodafone/1.0/V904SH/SHJ003/SN000000000000000 Browser/VF-NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1',
@@ -28,7 +30,7 @@ def test_display_error():
            }
 
     def func(ua, width, height, color, depth):
-        assert ua.display.width == width
+        assert ua.display.width == width, repr(ua.display.width)
         assert ua.display.height == height
         assert ua.display.color == color
         assert ua.display.depth == depth
@@ -58,23 +60,33 @@ def test_display_error():
     env = dict(base_env)
     del env['HTTP_X_JPHONE_DISPLAY']
     ua = detect(env)
-    yield (func, ua, 0, 0, True, 262144)
+    yield (func, ua, None, None, True, 262144)
 
     env = dict(base_env)
     env['HTTP_X_JPHONE_DISPLAY'] = '480'
     ua = detect(env)
-    yield (func, ua, 0, 0, True, 262144)
+    yield (func, ua, None, None, True, 262144)
 
     env = dict(base_env)
     env['HTTP_X_JPHONE_DISPLAY'] = '480*spam'
     ua = detect(env)
-    yield (func, ua, 0, 0, True, 262144)
+    yield (func, ua, None, None, True, 262144)
 
     # Invalid type
     env = dict(base_env)
     env['HTTP_X_JPHONE_DISPLAY'] = 1
     ua = detect(env)
-    yield (func, ua, 0, 0, True, 262144)
+    yield (func, ua, None, None, True, 262144)
+
+def test_strip_serialnumber():
+    value = 'SoftBank/1.0/816SH/SHJ001 Browser/NetFront/3.4 Profile/MIDP-2.0 Configuration/CLDC-1.1'
+    ua = detect({'HTTP_USER_AGENT': value})
+    assert ua.strip_serialnumber() == value
+
+    ua = detect({'HTTP_USER_AGENT':
+                     'Vodafone/1.0/V904SH/SHJ003/SN000000000000000 Browser/VF-NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1'})
+    res = ua.strip_serialnumber()
+    assert res == 'Vodafone/1.0/V904SH/SHJ003 Browser/VF-NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1', repr(res)
 
 def test_jphone_uid():
     useragent = 'Vodafone/1.0/V904SH/SHJ003/SN000000000000000 Browser/VF-NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1'
@@ -90,7 +102,6 @@ def test_useragent_softbank():
               serial_number=None, vendor=None, vendor_version=None, java_infos=None):
         ua = detect({'HTTP_USER_AGENT': useragent})
 
-        assert isinstance(ua, SoftBank)
         assert ua.carrier == 'SoftBank'
         assert ua.short_carrier == 'S'
 
@@ -186,14 +197,65 @@ def test_crawler():
 
 def test_error_agents():
     def tester(useragent):
-        try:
-            ua = detect({'HTTP_USER_AGENT':useragent})
-        except exceptions.NoMatchingError:
-            pass
-        else:
-            assert False, 'NoMatchingError expected'
+        ua = detect({'HTTP_USER_AGENT':useragent})
+        assert ua.is_softbank()
+
     for datum in ERRORS:
         yield tester, datum
+
+
+def test_is_bogus():
+    def func(ip, expected):
+        ua = detect({'HTTP_USER_AGENT': 'SoftBank/1.0/705P/PJP10 Browser/Teleca-Browser/3.1 Profile/MIDP-2.0 Configuration/CLDC-1.1',
+                     'REMOTE_ADDR'    : ip,
+                     })
+        assert ua.is_softbank()
+        res = ua.is_bogus()
+        assert res == expected, '%s expected, actual %s' % (expected, res)
+
+    for ip, expected in (
+        ('210.230.128.224', True),
+        ('123.108.236.0', False),
+        ):
+        yield func, ip, expected
+
+
+def test_extra_ip():
+    ctxt1 = Context(extra_softbank_ips=['192.168.0.0/24'])
+    ua = detect({'HTTP_USER_AGENT': 'SoftBank/1.0/816SH/SHJ001 Browser/NetFront/3.4 Profile/MIDP-2.0 Configuration/CLDC-1.1',
+                 'REMOTE_ADDR'    : '192.168.0.1',
+                 },
+                context=ctxt1)
+    assert ua.is_softbank()
+    assert ua.is_bogus() is False
+
+    ctxt2 = Context(extra_softbank_ips=[])
+    ua = detect({'HTTP_USER_AGENT': 'SoftBank/1.0/816SH/SHJ001 Browser/NetFront/3.4 Profile/MIDP-2.0 Configuration/CLDC-1.1',
+                 'REMOTE_ADDR'    : '192.168.0.1',
+                 },
+                context=ctxt2)
+    assert ua.is_softbank()
+    assert ua.is_bogus() is True
+
+
+def test_my_factory():
+    class MySoftBankUserAgent(SoftBankUserAgent):
+        def get_my_attr(self):
+            return self.environ.get('HTTP_X_DOCOMO_UID')
+
+    class MySoftBankUserAgentFactory(SoftBankUserAgentFactory):
+        device_class = MySoftBankUserAgent
+
+    context = Context(softbank_factory=MySoftBankUserAgentFactory)
+    ua = detect({'HTTP_USER_AGENT'  : 'SoftBank/1.0/812SH/SHJ001/SN333333333333333 Browser/NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1',
+                 'REMOTE_ADDR'      : '192.168.0.1',
+                 'HTTP_X_DOCOMO_UID': 'spam',
+                 },
+                context=context)
+    assert ua.is_softbank()
+    assert isinstance(ua, MySoftBankUserAgent)
+    assert ua.get_my_attr() == 'spam'
+
 
 #########################
 # Test data

@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.1.2'
+version = '0.2.0'
 
 setup(name='uamobile',
       version=version,
@@ -33,7 +33,7 @@ Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-          # -*- Extra requirements: -*-
+        'IPy',
       ],
       entry_points="""
       # -*- Entry points: -*-
