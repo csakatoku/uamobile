@@ -51,11 +51,6 @@ def test_display_error():
     ua = detect(env)
     yield (func, ua, 480, 640, False, 0)
 
-    env = dict(base_env)
-    env['HTTP_X_JPHONE_COLOR'] = 1
-    ua = detect(env)
-    yield (func, ua, 480, 640, False, 0)
-
     # Invalid DISPLAY
     env = dict(base_env)
     del env['HTTP_X_JPHONE_DISPLAY']
@@ -69,12 +64,6 @@ def test_display_error():
 
     env = dict(base_env)
     env['HTTP_X_JPHONE_DISPLAY'] = '480*spam'
-    ua = detect(env)
-    yield (func, ua, None, None, True, 262144)
-
-    # Invalid type
-    env = dict(base_env)
-    env['HTTP_X_JPHONE_DISPLAY'] = 1
     ua = detect(env)
     yield (func, ua, None, None, True, 262144)
 
