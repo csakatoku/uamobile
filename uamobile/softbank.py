@@ -69,29 +69,28 @@ class SoftBankUserAgent(UserAgent):
         return self.environ.get('HTTP_X_JPHONE_MSNAME')
     msname = property(get_msname)
 
+    def get_smaf(self):
+        return self.environ.get('HTTP_X_JPHONE_SMAF')
+    smaf = property(get_smaf)
+
     def make_display(self):
         """
         create a new Display object.
         """
         try:
             width, height = map(int, self.environ.get('HTTP_X_JPHONE_DISPLAY', '').split('*', 1))
-        except (ValueError, AttributeError):
+        except ValueError:
+            # x-jphone-display is absent, or invalid format
             width = None
             height = None
 
-        try:
-            color_string = self.environ['HTTP_X_JPHONE_COLOR']
-            try:
-                color = color_string.startswith('C')
-            except AttributeError:
-                color = False
+        # assuming that WSGI environment variable is always string if the key exists
+        color_string = self.environ.get('HTTP_X_JPHONE_COLOR', '')
+        color = color_string.startswith('C')
 
-            try:
-                depth = int(color_string[1:])
-            except (ValueError, TypeError):
-                depth = 0
-        except KeyError:
-            color = False
+        try:
+            depth = int(color_string[1:])
+        except (ValueError, TypeError):
             depth = 0
 
         return Display(width=width, height=height, color=color, depth=depth)

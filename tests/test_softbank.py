@@ -4,6 +4,20 @@ from uamobile import detect, Context
 from uamobile.softbank import SoftBankUserAgent
 from uamobile.factory.softbank import SoftBankUserAgentFactory
 
+def test_msname():
+    ua = detect({'HTTP_USER_AGENT'     : 'SoftBank/1.0/824SH/SHJ001 Browser/NetFront/3.4 Profile/MIDP-2.0 Configuration/CLDC-1.1',
+                 'HTTP_X_JPHONE_SMAF'  : '64/pcm/grf/rs',
+                 'HTTP_X_JPHONE_MSNAME': '824SH',
+                 })
+    assert ua.msname == '824SH'
+
+def test_smaf():
+    ua = detect({'HTTP_USER_AGENT'     : 'SoftBank/1.0/824SH/SHJ001 Browser/NetFront/3.4 Profile/MIDP-2.0 Configuration/CLDC-1.1',
+                 'HTTP_X_JPHONE_SMAF'  : '64/pcm/grf/rs',
+                 'HTTP_X_JPHONE_MSNAME': '824SH',
+                 })
+    assert ua.smaf == '64/pcm/grf/rs'
+
 def test_display():
     env = {'HTTP_USER_AGENT': 'Vodafone/1.0/V904SH/SHJ003/SN000000000000000 Browser/VF-NetFront/3.3 Profile/MIDP-2.0 Configuration/CLDC-1.1',
            'HTTP_X_JPHONE_MSNAME': 'V904SH',
@@ -116,7 +130,10 @@ def test_useragent_softbank():
         yield ([inner] + list(args))
 
 def test_jphone_2_0():
-    ua = detect({'HTTP_USER_AGENT':'J-PHONE/2.0/J-DN02'})
+    ua = detect({'HTTP_USER_AGENT'      :'J-PHONE/2.0/J-DN02',
+                 'HTTP_X_JPHONE_COLOR'  : 'G4',
+                 'HTTP_X_JPHONE_DISPLAY': '116*112',
+                 })
     assert isinstance(ua.version, basestring)
     assert not ua.is_3g(), 'Invalid generation'
     assert ua.is_type_c(), 'Invalid type %s' % ua.version
@@ -124,6 +141,9 @@ def test_jphone_2_0():
     assert not ua.is_type_w(), 'Invalid type' % ua.version
     assert ua.supports_cookie() == False
     assert ua.vendor == 'DN', ua.vendor
+    assert not ua.display.color
+    assert ua.display.width == 116
+    assert ua.display.height == 112
 
 def test_jphone_3_0():
     ua = detect({'HTTP_USER_AGENT':'J-PHONE/3.0/J-PE03_a'})
@@ -183,6 +203,24 @@ def test_crawler():
                       'SoftBank/1.0/913SH/SHJ001/SN000123456789000 Browser/NetFront/3.4 Profile/MIDP-2.0 (symphonybot1.froute.jp; +http://search.froute.jp/howto/crawler.html)',
                       ):
         yield func, useragent
+
+def test_s_appli():
+    ua = detect({'HTTP_USER_AGENT': 'SoftBank/1.0/831SH/SHJ001 Java/Java/1.0 Profile/MIDP-2.0 Configuration/CLDC-1.1'})
+    assert ua.is_softbank()
+    assert ua.is_3g()
+    assert ua.model == '831SH'
+
+def test_mobile_widget():
+    ua = detect({'HTTP_USER_AGENT': 'SoftBank/1.0/831SH/SHJ001 Widgets/Widgets/1.0'})
+    assert ua.is_softbank()
+    assert ua.is_3g()
+    assert ua.model == '831SH'
+
+def test_flash_lite():
+    ua = detect({'HTTP_USER_AGENT': 'SoftBank/1.0/831SH/SHJ001 Flash/Flash-Lite/3.0'})
+    assert ua.is_softbank()
+    assert ua.is_3g()
+    assert ua.model == '831SH'
 
 def test_error_agents():
     def tester(useragent):
