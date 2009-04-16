@@ -56,7 +56,7 @@ class EZwebUserAgent(UserAgent):
         """
         returns whether the agent is CDMA 1X WIN or not.
         """
-        return self._device_id[2:1] == '3'
+        return self.device_id[2:3] == '3'
 
     def is_wap1(self):
         return not self.is_wap2()

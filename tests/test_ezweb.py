@@ -108,7 +108,7 @@ def test_display_error():
     assert ua.display.depth is None
 
 def test_useragent_ezweb():
-    def inner(useragent, version, model, device_id, server, xhtml_compliant, comment, is_wap1, is_wap2):
+    def inner(useragent, version, model, device_id, server, xhtml_compliant, comment, is_wap1, is_wap2, is_win):
         ua = detect({'HTTP_USER_AGENT':useragent})
         assert ua.carrier == 'EZweb'
         assert ua.short_carrier == 'E'
@@ -126,6 +126,7 @@ def test_useragent_ezweb():
         assert ua.is_xhtml_compliant() == xhtml_compliant
         assert ua.is_wap1() == is_wap1
         assert ua.is_wap2() == is_wap2
+        assert ua.is_win() == is_win
         assert ua.display is not None
         assert ua.supports_cookie() == True
 
@@ -189,16 +190,27 @@ def test_my_factory():
     assert isinstance(ua, MyEZwebUserAgent)
     assert ua.get_my_attr() == 'spam'
 
+def test_is_win():
+    def func(ua, device_id):
+        device = detect({'HTTP_USER_AGENT': ua})
+        assert device.device_id == device_id
+        assert device.is_win() is True
+
+    for ua, device_id in (('KDDI-HI36 UP.Browser/6.2.0.10.4 (GUI) MMP/2.0', 'HI36'),
+                          ('KDDI-KC3D UP.Browser/6.2.0.13.2 (GUI) MMP/2.0', 'KC3D'),):
+        yield func, ua, device_id
+
+
 #########################
 # Test data
 #########################
 
 DATA = (
-    # ua, version, model, device_id, server, xhtml_compliant, comment, is_wap1, is_wap2
-    ('UP.Browser/3.01-HI01 UP.Link/3.4.5.2', '3.01', 'HI01', 'HI01', 'UP.Link/3.4.5.2', False, None, True, False),
-    ('KDDI-TS21 UP.Browser/6.0.2.276 (GUI) MMP/1.1', '6.0.2.276 (GUI)', 'TS21', 'TS21', 'MMP/1.1', True, None, False, True),
-    ('UP.Browser/3.04-TS14 UP.Link/3.4.4 (Google WAP Proxy/1.0)', '3.04', 'TS14', 'TS14', 'UP.Link/3.4.4', False, 'Google WAP Proxy/1.0', True, False),
-    ('UP.Browser/3.04-TST4 UP.Link/3.4.5.6', '3.04', 'TST4', 'TST4', 'UP.Link/3.4.5.6', False, None, True, False),
-    ('KDDI-KCU1 UP.Browser/6.2.0.5.1 (GUI) MMP/2.0', '6.2.0.5.1 (GUI)', 'KCU1', 'KCU1', 'MMP/2.0', True, None, False, True),
-    ('KDDI-TS2A UP.Browser/6.2.0.9 (GUI) MMP/2.0', '6.2.0.9 (GUI)', 'TS2A', 'TS2A', 'MMP/2.0', True, None, False, True),
+    # ua, version, model, device_id, server, xhtml_compliant, comment, is_wap1, is_wap2, is_win
+    ('UP.Browser/3.01-HI01 UP.Link/3.4.5.2', '3.01', 'HI01', 'HI01', 'UP.Link/3.4.5.2', False, None, True, False, False),
+    ('KDDI-TS21 UP.Browser/6.0.2.276 (GUI) MMP/1.1', '6.0.2.276 (GUI)', 'TS21', 'TS21', 'MMP/1.1', True, None, False, True, False),
+    ('UP.Browser/3.04-TS14 UP.Link/3.4.4 (Google WAP Proxy/1.0)', '3.04', 'TS14', 'TS14', 'UP.Link/3.4.4', False, 'Google WAP Proxy/1.0', True, False, False),
+    ('UP.Browser/3.04-TST4 UP.Link/3.4.5.6', '3.04', 'TST4', 'TST4', 'UP.Link/3.4.5.6', False, None, True, False, False),
+    ('KDDI-KCU1 UP.Browser/6.2.0.5.1 (GUI) MMP/2.0', '6.2.0.5.1 (GUI)', 'KCU1', 'KCU1', 'MMP/2.0', True, None, False, True, False),
+    ('KDDI-TS2A UP.Browser/6.2.0.9 (GUI) MMP/2.0', '6.2.0.9 (GUI)', 'TS2A', 'TS2A', 'MMP/2.0', True, None, False, True, False),
 )
