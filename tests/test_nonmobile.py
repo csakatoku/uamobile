@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from tests import msg
-from uamobile import detect, NonMobile
+from uamobile import *
+from uamobile.nonmobile import NonMobileUserAgent as NonMobile
+
+def test_detect_fast():
+    assert detect_fast('Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.1) Gecko/2008070208 Firefox/3.0.1') == 'nonmobile'
 
 def test_empty_useragent():
     try:

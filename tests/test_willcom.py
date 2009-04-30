@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from tests import msg
-from uamobile import detect, Context
+from uamobile import *
 from uamobile.willcom import WillcomUserAgent
 from uamobile.factory.willcom import WillcomUserAgentFactory
+
+def test_detect_fast():
+    assert detect_fast('Mozilla/3.0(WILLCOM;SANYO/WX310SA/2;1/1/C128) NetFront/3.3,61.198.142.127') == 'willcom'
 
 def test_useragent():
     def inner(useragent, name, vendor, model, model_version, browser_version, cache_size):

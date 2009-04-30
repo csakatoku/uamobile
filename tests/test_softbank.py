@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from tests import msg
-from uamobile import detect, Context
+from uamobile import *
 from uamobile.softbank import SoftBankUserAgent
 from uamobile.factory.softbank import SoftBankUserAgentFactory
+
+def test_detect_fast():
+    assert detect_fast('SoftBank/1.0/816SH/SHJ001 Browser/NetFront/3.4 Profile/MIDP-2.0 Configuration/CLDC-1.1') == 'softbank'
 
 def test_msname():
     ua = detect({'HTTP_USER_AGENT'     : 'SoftBank/1.0/824SH/SHJ001 Browser/NetFront/3.4 Profile/MIDP-2.0 Configuration/CLDC-1.1',

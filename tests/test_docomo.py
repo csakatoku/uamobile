@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from tests import msg
-from uamobile import detect, Context
+from uamobile import *
 from uamobile.docomo import DoCoMoUserAgent
 from uamobile.factory.docomo import DoCoMoUserAgentFactory
+
+def test_detect_fast():
+    assert detect_fast('DoCoMo/2.0 SH01A(c100;TB;W24H16)') == 'docomo'
 
 def test_useragent_docomo():
     def inner(useragent, version, html_version, model, cache_size,
