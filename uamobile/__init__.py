@@ -3,6 +3,9 @@ import re
 from uamobile.nonmobile import NonMobileUserAgent as NonMobile
 from uamobile.context import Context
 
+__version__ = '0.2.3'
+__author__  = 'Chihiro Sakatoku <csakatoku@gmail.com>'
+
 __all__ = ['detect_fast', 'detect', 'Context', 'NonMobile']
 
 DOCOMO_RE   = re.compile(r'^DoCoMo/\d\.\d[ /]')
