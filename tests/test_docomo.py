@@ -404,7 +404,12 @@ DATA = (
 ('DoCoMo/2.0 N03A(c100;TB;W24H16)', '2.0', '7.2', 'N03A', 100, True, 'N', '03A', {'status':'TB'}, (240, 320)),
 ('DoCoMo/2.0 SH01A(c100;TB;W24H16)', '2.0', '7.2', 'SH01A', 100, True, 'SH', '01A', {'status':'TB'}, (240, 320)),
 
-# Added 2009/5/19
-('DoCoMo/2.0 P07A(c500;TB;W24H15)', '2.0', None, 'P07A', 500, True, 'P', '07A', {'status':'TB'}, (240, 320), True),
-('DoCoMo/2.0 N06A(c500;TB;W24H16)', '2.0', None, 'N06A', 500, True, 'N', '06A', {'status':'TB'}, (240, 320), True),
+# Added 2009/5/21
+('DoCoMo/2.0 P02A(c100;TB;W24H15)', '2.0', '7.2', 'P02A', 100, True, 'P', '02A', {'status':'TB'}, (240, 320)),
+('DoCoMo/2.0 P03A(c100;TB;W24H15)', '2.0', '7.2', 'P03A', 100, True, 'P', '03A', {'status':'TB'}, (240, 320)),
+('DoCoMo/2.0 P04A(c100;TB;W24H15)', '2.0', '7.2', 'P04A', 100, True, 'P', '04A', {'status':'TB'}, (240, 320)),
+('DoCoMo/2.0 P05A(c100;TB;W24H15)', '2.0', '7.2', 'P05A', 100, True, 'P', '05A', {'status':'TB'}, (240, 320)),
+('DoCoMo/2.0 P06A(c100;TB;W20H13)', '2.0', '7.2', 'P06A', 100, True, 'P', '06A', {'status':'TB'}, (240, 320)),
+('DoCoMo/2.0 P07A(c500;TB;W24H15)', '2.0', '7.2', 'P07A', 500, True, 'P', '07A', {'status':'TB'}, (240, 320), True),
+('DoCoMo/2.0 N06A(c500;TB;W24H16)', '2.0', '7.2', 'N06A', 500, True, 'N', '06A', {'status':'TB'}, (240, 320), True),
 )
