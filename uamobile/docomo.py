@@ -10,9 +10,11 @@ except NameError:
 IMODE_BROWSER_2 = frozenset([
         # 2009 summer
         # STYLE series
-        'F08A', 'N08A', 'P08A', 'SH05A',
+        'N08A', 'F08A', 'P08A', 'SH05A',
+        'N08A2',
         # PRIME series
-        'F09A', 'N06A', 'N07A', 'P07A', 'SH06A',
+        'N06A', 'P07A', 'F09A', 'N07A', 'SH06A',
+        'N06A2',
         # SMART series
         'N09A', 'P09A',
         # PRO series

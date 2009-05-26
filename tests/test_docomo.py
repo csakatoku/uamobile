@@ -412,4 +412,8 @@ DATA = (
 ('DoCoMo/2.0 P06A(c100;TB;W20H13)', '2.0', '7.2', 'P06A', 100, True, 'P', '06A', {'status':'TB'}, (240, 320)),
 ('DoCoMo/2.0 P07A(c500;TB;W24H15)', '2.0', '7.2', 'P07A', 500, True, 'P', '07A', {'status':'TB'}, (240, 320), True),
 ('DoCoMo/2.0 N06A(c500;TB;W24H16)', '2.0', '7.2', 'N06A', 500, True, 'N', '06A', {'status':'TB'}, (240, 320), True),
+
+# Added 2009/5/26
+('DoCoMo/2.0 N06A2(c500;TB;W24H16)', '2.0', '7.2', 'N06A2', 500, True, 'N', '06A2', {'status':'TB'}, (240, 320), True),
+('DoCoMo/2.0 N08A2(c500;TB;W24H16)', '2.0', '7.2', 'N08A2', 500, True, 'N', '08A2', {'status':'TB'}, (240, 320), True),
 )
