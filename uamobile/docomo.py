@@ -2,26 +2,6 @@
 from uamobile.base import UserAgent, Display
 from uamobile.docomodisplaymap import DISPLAYMAP_DOCOMO
 
-try:
-    frozenset
-except NameError:
-    from sets import ImmutableSet as frozenset
-
-IMODE_BROWSER_2 = frozenset([
-        # 2009 summer
-        # STYLE series
-        'N08A', 'F08A', 'P08A', 'SH05A',
-        # PRIME series
-        'N06A', 'P07A', 'F09A', 'N07A', 'SH06A',
-        'N06A2', 'N06A3', 'P07A3',
-        # SMART series
-        'N09A', 'P09A',
-        # PRO series
-        'SH07A',
-        # others
-        #'SH06ANERV',
-])
-
 class DoCoMoUserAgent(UserAgent):
     """
     NTT DoCoMo implementation
@@ -102,7 +82,7 @@ class DoCoMoUserAgent(UserAgent):
         for cookie support of i-mode browsers, see
         http://www.nttdocomo.co.jp/info/news_release/page/090519_00.html#p03
         """
-        return self.model in IMODE_BROWSER_2
+        return (self.cache_size == 500)
 
     def get_guid(self):
         """
