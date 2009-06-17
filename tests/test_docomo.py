@@ -422,4 +422,8 @@ DATA = (
 
 # Added 2009/6/5
 ('DoCoMo/2.0 F09A3(c500;TB;W24H16)', '2.0', '7.2', 'F09A3', 500, True, 'F', '09A3', {'status':'TB'}, (240, 320), True),
+
+# Added 2009/6/18
+('DoCoMo/2.0 SH05A3(c500;TB;W24H14)', '2.0', '7.2', 'SH05A3', 500, True, 'SH', '05A3', {'status':'TB'}, (240, 320), True),
+('DoCoMo/2.0 SH06A3(c500;TB;W24H14)', '2.0', '7.2', 'SH06A3', 500, True, 'SH', '06A3', {'status':'TB'}, (240, 320), True),
 )
