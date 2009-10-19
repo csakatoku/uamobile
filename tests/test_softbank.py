@@ -130,7 +130,7 @@ def test_useragent_softbank():
             assert ua.vendor_version == vendor_version, msg(ua, ua.vendor_version, vendor_version)
 
     for args in DATA:
-        yield ([inner] + list(args))
+        yield tuple([inner] + list(args))
 
 def test_jphone_2_0():
     ua = detect({'HTTP_USER_AGENT'      :'J-PHONE/2.0/J-DN02',

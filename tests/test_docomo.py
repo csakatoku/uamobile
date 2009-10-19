@@ -48,7 +48,7 @@ def test_useragent_docomo():
                     assert ua.is_gps() == v, msg(ua, ua.is_gps(), v)
 
     for args in DATA:
-        yield ([inner] + list(args))
+        yield tuple([inner] + list(args))
 
 def test_display_default():
     # the following User-Agent doesn't exist at least in spring 2009

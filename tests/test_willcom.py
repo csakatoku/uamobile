@@ -28,7 +28,7 @@ def test_useragent():
         assert ua.supports_cookie() == True
 
     for args in DATA:
-        yield ([inner] + list(args))
+        yield tuple([inner] + list(args))
 
 
 def test_display_default():

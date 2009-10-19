@@ -134,7 +134,7 @@ def test_useragent_ezweb():
         assert ua.supports_cookie() == True
 
     for args in DATA:
-        yield ([inner] + list(args))
+        yield tuple([inner] + list(args))
 
 def test_strip_serialnumber():
     value = 'KDDI-TS2A UP.Browser/6.2.0.9 (GUI) MMP/2.0'
