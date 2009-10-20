@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.2.6'
+version = '0.2.8'
 
 setup(name='uamobile',
       version=version,
