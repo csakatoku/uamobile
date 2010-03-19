@@ -95,6 +95,14 @@ class DoCoMoUserAgent(UserAgent):
             return None
     guid = property(get_guid)
 
+    def get_ue_version(self):
+        """
+        return UE-Version
+        see http://www.nttdocomo.co.jp/service/imode/make/content/ip/xheader/index.html
+        """
+        return self.environ.get('HTTP_X_UE_VERSION')
+    ue_version = property(get_ue_version)
+
     def make_display(self):
         """
         create a new Display object.

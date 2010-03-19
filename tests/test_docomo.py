@@ -50,6 +50,16 @@ def test_useragent_docomo():
     for args in DATA:
         yield tuple([inner] + list(args))
 
+def test_ue_version():
+    ua = detect({'HTTP_USER_AGENT': 'DoCoMo/2.0 SH905i(c100;TB;W24H16)'})
+    assert ua.is_docomo()
+    assert ua.ue_version is None
+
+    ua = detect({'HTTP_USER_AGENT'  : 'DoCoMo/2.0 F08A3(c500;TB;W24H16)',
+                 'HTTP_X_UE_VERSION': '2'})
+    assert ua.is_docomo()
+    assert ua.ue_version == '2'
+
 def test_display_default():
     # the following User-Agent doesn't exist at least in spring 2009
     ua = detect({'HTTP_USER_AGENT':'DoCoMo/2.0 SH99A(c100;TB;W24H16)'})
