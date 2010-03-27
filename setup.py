@@ -24,7 +24,7 @@ Topic :: Software Development :: Libraries :: Python Modules
 Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware
 """.splitlines())),
       keywords='',
-      author='Chihio Sakatoku',
+      author='Chihiro Sakatoku',
       author_email='csakatoku@gmail.com',
       url='http://code.google.com/p/wsgiuseragentmobile/',
       license='MIT License',
