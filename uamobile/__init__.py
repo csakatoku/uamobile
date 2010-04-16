@@ -3,7 +3,7 @@ import re
 from uamobile.nonmobile import NonMobileUserAgent as NonMobile
 from uamobile.context import Context
 
-__version__ = '0.2.10'
+__version__ = '0.2.11'
 __author__  = 'Chihiro Sakatoku <csakatoku@gmail.com>'
 
 __all__ = ['detect_fast', 'detect', 'Context', 'NonMobile']
