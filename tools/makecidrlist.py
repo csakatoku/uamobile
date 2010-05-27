@@ -18,7 +18,7 @@ try:
 except ImportError:
     has_yaml = False
 
-from uamobile.utils import scraper
+from uamobile.scrapers import cidr as scraper
 
 def main():
     parser = optparse.OptionParser()
