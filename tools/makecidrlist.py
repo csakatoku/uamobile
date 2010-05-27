@@ -7,10 +7,14 @@ import pickle
 import pprint
 
 try:
-    import simplejson
+    import json
     has_json = True
 except ImportError:
-    has_json = False
+    try:
+        import simplejson as json
+        has_json = True
+    except ImportError:
+        has_json = False
 
 try:
     import yaml
@@ -43,9 +47,9 @@ def main():
         dump_func = lambda result: pickle.dump(result, output)
     elif opts.format == 'json':
         if not has_json:
-            print "To use 'json' format, you need simplejson"
+            print "To use 'json' format, you need json or simplejson module"
             sys.exit(1)
-        dump_func = lambda result: simplejson.dump(result, output, ensure_ascii=False, indent=2)
+        dump_func = lambda result: json.dump(result, output, ensure_ascii=False, indent=2)
     elif opts.format == 'yaml':
         if not has_yaml:
             print "To use 'yaml' format, you need PyYAML"
