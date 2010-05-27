@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.2.11'
+version = '0.3.0'
 
 setup(name='uamobile',
       version=version,
@@ -26,7 +26,7 @@ Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware
       keywords='',
       author='Chihiro Sakatoku',
       author_email='csakatoku@gmail.com',
-      url='http://code.google.com/p/wsgiuseragentmobile/',
+      url='http://github.com/csakatoku/uamobile',
       license='MIT License',
       platforms=["any"],
       packages=find_packages(exclude=['examples', 'tests']),
