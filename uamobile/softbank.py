@@ -6,6 +6,20 @@ class SoftBankUserAgent(UserAgent):
     short_carrier = 'S'
     serialnumber = None
 
+    def get_flash_version(self):
+        """
+        returns Flash Lite version.
+        """
+        from uamobile.data.flash.softbank import DATA
+        version = DATA.get(self.model)
+        if version:
+            return version
+
+        # for 831SHs, 830SHp, etc
+        version = DATA.get(self.model[:-1])
+        return version
+    flash_version = property(get_flash_version)
+
     def supports_cookie(self):
         """
         returns True if the device supports HTTP Cookie.

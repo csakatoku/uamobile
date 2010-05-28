@@ -100,6 +100,12 @@ class UserAgent(object):
     def is_nonmobile(self):
         return False
 
+    def supports_flash(self):
+        """
+        returns True if the agent supports Flash
+        """
+        return self.flash_version is not None
+
     def supports_cookie(self):
         """
         returns True if the agent supports HTTP cookie.

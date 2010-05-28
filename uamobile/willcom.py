@@ -12,6 +12,13 @@ class WillcomUserAgent(UserAgent):
         self.model_version = None
         self.browser_version = None
 
+    def get_flash_version(self):
+        """
+        returns Flash Lite version.
+        """
+        return None
+    flash_version = property(get_flash_version)
+
     def supports_cookie(self):
         # TODO
         # I'm not sure All WILLCOM phones can handle HTTP cookie.

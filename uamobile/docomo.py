@@ -76,6 +76,20 @@ class DoCoMoUserAgent(UserAgent):
     def is_foma(self):
         return self.version == '2.0'
 
+    def get_flash_version(self):
+        """
+        returns Flash Lite version.
+        """
+        from uamobile.data.flash.docomo import DATA
+        version = DATA.get(self.model)
+        if version or self.cache_size != 500:
+            return version
+
+        # for P07A3, N07A3, etc
+        version = DATA.get(self.model[:-1])
+        return version
+    flash_version = property(get_flash_version)
+
     def supports_cookie(self):
         """
         Return true if the device supports Cookie.

@@ -7,6 +7,13 @@ class NonMobileUserAgent(UserAgent):
     short_carrier = 'N'
     serialnumber = None
 
+    def get_flash_version(self):
+        """
+        returns Flash Lite version.
+        """
+        return '3.1'
+    flash_version = property(get_flash_version)
+
     def get_name(self):
         return 'NonMobile'
 

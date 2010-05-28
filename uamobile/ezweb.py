@@ -5,6 +5,15 @@ class EZwebUserAgent(UserAgent):
     carrier = 'EZweb'
     short_carrier = 'E'
 
+    def get_flash_version(self):
+        """
+        returns Flash Lite version.
+        """
+        from uamobile.data.flash.ezweb import DATA
+        version = DATA.get(self.model)
+        return version
+    flash_version = property(get_flash_version)
+
     def supports_cookie(self):
         return True
 
