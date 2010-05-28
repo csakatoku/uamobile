@@ -1,34 +1,14 @@
 # -*- coding: utf-8 -*-
-import urllib2
-from lxml import etree
+from uamobile.scrapers.base import Scraper
 
-class CIDR(object):
-    # subclass must override this property
-    url = None
-
-    def scrape(self):
-        stream = self.get_stream()
-        doc = etree.parse(stream, etree.HTMLParser())
-        res = []
-        for addr in self.do_scrape(doc):
-            res.append(str(addr))
-        return res
-
-    def get_stream(self):
-        return urllib2.urlopen(self.url)
-
-    def do_scrape(self, doc):
-        raise NotImplementedError()
-
-
-class DoCoMoCIDR(CIDR):
+class DoCoMoScraper(Scraper):
     url = 'http://www.nttdocomo.co.jp/service/imode/make/content/ip/'
 
     def do_scrape(self, doc):
         return [x.text for x in doc.xpath('//div[@class="boxArea" and count(preceding-sibling::*)=2]/div/div[@class="section"]/ul[@class="normal txt" and position()=1]/li')]
 
 
-class EZWebCIDR(CIDR):
+class EZWebScraper(Scraper):
     url = 'http://www.au.kddi.com/ezfactory/tec/spec/ezsava_ip.html'
 
     def do_scrape(self, doc):
@@ -43,14 +23,14 @@ class EZWebCIDR(CIDR):
         return res
 
 
-class SoftBankCIDR(CIDR):
+class SoftBankScraper(Scraper):
     url = 'http://creation.mb.softbank.jp/web/web_ip.html'
 
     def do_scrape(self, doc):
         return [x.text.strip() for x in doc.xpath("//div[@class='contents']/table/tr[7]/td/table/tr/td/table/tr/td")]
 
 
-class WILLCOMCIDR(CIDR):
+class WILLCOMScraper(Scraper):
     url = 'http://www.willcom-inc.com/ja/service/contents_service/create/center_info/index.html'
 
     def do_scrape(self, doc):
@@ -67,23 +47,3 @@ class WILLCOMCIDR(CIDR):
                     if txt:
                         res.append(txt)
         return res
-
-
-def scrape_cidr(carrier):
-    carrier = carrier.lower()
-
-    alias = { 'kddi'      : 'ezweb',
-              'thirdforce': 'softbank',
-              }.get(carrier)
-    if alias is not None:
-        carrier = alias
-
-    try:
-        s = { 'docomo'  : DoCoMoCIDR(),
-              'ezweb'   : EZWebCIDR(),
-              'softbank': SoftBankCIDR(),
-              'willcom' : WILLCOMCIDR(),
-              }[carrier]
-        return s.scrape()
-    except KeyError:
-        raise ValueError('invalid carrier name "%s"' % carrier)
