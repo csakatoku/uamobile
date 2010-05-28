@@ -21,7 +21,6 @@ class DoCoMoScraper(Scraper):
                 model = span.text.strip()
                 matcher = re.match(ur'([A-Z]{1,2})-?(\d{1,3}[a-zA-Z\u03bc]+)', model)
                 if not matcher:
-                    print model
                     continue
 
                 model = matcher.group(1) + matcher.group(2)
@@ -59,7 +58,7 @@ class EZWebScraper(Scraper):
                 elif flash == u'\u25cb':
                     version = '1.1'
                 else:
-                    continue
+                    version = None
 
                 devices = ''.join(tr[0].itertext()).strip().split('/')
                 for idx, device in enumerate(devices):
@@ -93,7 +92,7 @@ class SoftBankScraper(Scraper):
             if matcher:
                 version = matcher.group(1)
             else:
-                continue
+                version = None
 
             matcher = re.search(r'^(\d+[A-Z]{1,2}|DM\d+[A-Z]{1,2})', model)
             if matcher:

@@ -10,8 +10,10 @@ class EZwebUserAgent(UserAgent):
         returns Flash Lite version.
         """
         from uamobile.data.flash.ezweb import DATA
-        version = DATA.get(self.model)
-        return version
+        try:
+            return DATA[self.model]
+        except KeyError:
+            return '2.0'
     flash_version = property(get_flash_version)
 
     def supports_cookie(self):

@@ -81,13 +81,16 @@ class DoCoMoUserAgent(UserAgent):
         returns Flash Lite version.
         """
         from uamobile.data.flash.docomo import DATA
-        version = DATA.get(self.model)
-        if version or self.cache_size != 500:
-            return version
+        try:
+            return DATA[self.model]
+        except KeyError:
+            pass
 
-        # for P07A3, N07A3, etc
-        version = DATA.get(self.model[:-1])
-        return version
+        if self.cache_size >= 500:
+            # for P07A3, N07A3, etc
+            return '3.1'
+        else:
+            return None
     flash_version = property(get_flash_version)
 
     def supports_cookie(self):

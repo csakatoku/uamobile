@@ -11,13 +11,26 @@ class SoftBankUserAgent(UserAgent):
         returns Flash Lite version.
         """
         from uamobile.data.flash.softbank import DATA
-        version = DATA.get(self.model)
-        if version:
-            return version
 
-        # for 831SHs, 830SHp, etc
-        version = DATA.get(self.model[:-1])
-        return version
+        if self.model.startswith('V'):
+            model = self.model[1:]
+        else:
+            model = self.model
+
+        try:
+            return DATA[model]
+        except KeyError:
+            pass
+
+        try:
+            # for 831SHs, 830SHp, etc
+            return DATA[model[:-1]]
+        except KeyError:
+            if self.vendor == 'MOT':
+                # MOT-V980/80.2F.2E. MIB/2.2.1 Profile/MIDP-2.0 Configuration/CLDC-1.1
+                return None
+            else:
+                return '2.0'
     flash_version = property(get_flash_version)
 
     def supports_cookie(self):
