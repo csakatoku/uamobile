@@ -245,7 +245,7 @@ def test_is_bogus():
 
     for ip, expected in (
         ('210.230.128.224', True),
-        ('123.108.236.0', False),
+        ('123.108.237.0', False),
         ):
         yield func, ip, expected
 
