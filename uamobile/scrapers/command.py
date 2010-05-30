@@ -26,7 +26,7 @@ except ImportError:
 def main():
     parser = optparse.OptionParser()
     parser.add_option("-m", "--module", dest="module", default=None,
-                      help="the scraper module. cidr/model/flash")
+                      help="the scraper module. cidr/model/flash/display")
     parser.add_option("-c", "--carrier", dest="carrier",
                       help="mobile jp carrier. docomo/ezweb/softbank/willcom")
     parser.add_option("-o", "--filename", dest="filename", default=None,

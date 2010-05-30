@@ -12,7 +12,7 @@ class Scraper(object):
         return self.do_scrape(doc)
 
     def get_document(self, stream):
-        doc = etree.parse(stream, etree.HTMLParser())
+        doc = etree.parse(stream, etree.HTMLParser(remove_comments=True))
         return doc
 
     def get_stream(self):
