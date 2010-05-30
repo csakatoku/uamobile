@@ -34,9 +34,12 @@ Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware
       zip_safe=False,
       install_requires=[
         'IPy',
+        'importlib',
       ],
       entry_points="""
       # -*- Entry points: -*-
+      [console_scripts]
+      uamobile-scrape = uamobile.scrapers.command:main
       """,
       test_suite='nose.collector'
       )
