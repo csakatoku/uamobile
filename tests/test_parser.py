@@ -80,6 +80,58 @@ EZWEB = (
 )
 
 SOFTBANK = (
+    ('SoftBank/1.0/841SHs/SHJ001/SN123456789012345 Browser/NetFront/3.5 Profile/MIDP-2.0 Configuration/CLDC-1.1',
+     { 'packet_compliant': True,
+       'version'         : '1.0',
+       'model'           : '841SHs',
+       'vendor'          : 'SH',
+       'vendor_version'  : 'J001',
+       'serialnumber'    : '123456789012345',
+       'info'       : { 'Browser': 'NetFront/3.5',
+                        'Profile': 'MIDP-2.0',
+                        'Configuration': 'CLDC-1.1',
+                        }
+       },
+     ),
+
+    ('SoftBank/1.0/841SHs/SHJ001/SN123456789012345 Java/Java/1.0 Profile/MIDP-2.0 Configuration/CLDC-1.1',
+     { 'packet_compliant': True,
+       'version'         : '1.0',
+       'model'           : '841SHs',
+       'vendor'          : 'SH',
+       'vendor_version'  : 'J001',
+       'serialnumber'    : '123456789012345',
+       'info'       : { 'Java': 'Java/1.0',
+                        'Profile': 'MIDP-2.0',
+                        'Configuration': 'CLDC-1.1',
+                        }
+       },
+     ),
+
+    ('SoftBank/1.0/841SHs/SHJ001 Widgets/Widgets/1.0',
+     { 'packet_compliant': True,
+       'version'         : '1.0',
+       'model'           : '841SHs',
+       'vendor'          : 'SH',
+       'vendor_version'  : 'J001',
+       'serialnumber'    : None,
+       'info'       : { 'Widgets': 'Widgets/1.0',
+                        }
+       },
+     ),
+
+    ('SoftBank/1.0/841SHs/SHJ001/SN123456789012345 Flash/Flash-Lite/3.1',
+     { 'packet_compliant': True,
+       'version'         : '1.0',
+       'model'           : '841SHs',
+       'vendor'          : 'SH',
+       'vendor_version'  : 'J001',
+       'serialnumber'    : '123456789012345',
+       'info'       : { 'Flash': 'Flash-Lite/3.1',
+                        }
+       },
+     ),
+
     ('Vodafone/1.0/V705SH (compatible; Y!J-SRD/1.0; http://help.yahoo.co.jp/help/jp/search/indexing/indexing-27.html)',
      { 'packet_compliant': True,
        'version'         : '1.0',
@@ -87,7 +139,7 @@ SOFTBANK = (
        'vendor'          : None,
        'vendor_version'  : None,
        'serialnumber'    : None,
-       'java_info'       : {}
+       'info'       : {}
        },
      ),
 
@@ -98,9 +150,10 @@ SOFTBANK = (
        'vendor'          : 'SE',
        'vendor_version'  : 'J001',
        'serialnumber'    : '123456789012345',
-       'java_info'       : { 'Profile': 'MIDP-2.0',
-                             'Configuration': 'CLDC-1.1',
-                             }
+       'info'       : { 'Profile': 'MIDP-2.0',
+                        'Configuration': 'CLDC-1.1',
+                        'Browser': 'SEMC-Browser/4.1',
+                        }
        },
      ),
 
@@ -111,9 +164,11 @@ SOFTBANK = (
        'vendor'          : 'NK',
        'vendor_version'  : 'J001',
        'serialnumber'    : None,
-       'java_info'       : { 'Profile': 'MIDP-2.0',
-                             'Configuration': 'CLDC-1.1',
-                             }
+       'info'       : { 'Profile': 'MIDP-2.0',
+                        'Configuration': 'CLDC-1.1',
+                        'Nokia6630': '2.39.148',
+                        'Series60' : '2.6',
+                        }
        },
      ),
 
@@ -124,10 +179,11 @@ SOFTBANK = (
        'vendor'          : 'SH',
        'vendor_version'  : '0001aa',
        'serialnumber'    : 'JSHA3029293',
-       'java_info'       : { 'Profile': 'MIDP-1.0',
-                             'Configuration': 'CLDC-1.0',
-                             'Ext-Profile'  : 'JSCL-1.1.0',
-                             }
+       'info'       : { 'Profile': 'MIDP-1.0',
+                        'Configuration': 'CLDC-1.0',
+                        'Ext-Profile'  : 'JSCL-1.1.0',
+                        'SH': '0001aa',
+                        }
        },
      ),
 
@@ -143,9 +199,10 @@ SOFTBANK = (
      { 'packet_compliant': True,
        'vendor'          : 'MOT',
        'vendor_version'  : '80.2F.2E.',
-       'java_info'       : { 'Profile': 'MIDP-2.0',
-                             'Configuration': 'CLDC-1.1',
-                             }
+       'info'       : { 'Profile': 'MIDP-2.0',
+                        'Configuration': 'CLDC-1.1',
+                        'MIB': '2.2.1',
+                        }
        },
      ),
 )

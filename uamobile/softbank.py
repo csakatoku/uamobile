@@ -121,3 +121,9 @@ class SoftBankUserAgent(UserAgent):
             depth = 0
 
         return Display(width=width, height=height, color=color, depth=depth)
+
+    def get_java_info(self):
+        import warnings
+        warnings.warn("'java_info' is depracted. use 'info' instead", DeprecationWarning)
+        return self.info
+    java_info = property(get_java_info)

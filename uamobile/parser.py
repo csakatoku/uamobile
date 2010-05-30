@@ -307,7 +307,7 @@ class SoftBankUserAgentParser(UserAgentParser):
             vendor = vendor_info[:-4]
             vendor_version = vendor_info[-4:]
 
-        java_info = dict([x.split('/') for x in ua[2:] if x])
+        info = dict([x.split('/', 1) for x in ua[1:] if x])
 
         return { 'packet_compliant': True,
                  'version'         : version,
@@ -315,7 +315,7 @@ class SoftBankUserAgentParser(UserAgentParser):
                  'vendor'          : vendor,
                  'vendor_version'  : vendor_version,
                  'serialnumber'    : serialnumber,
-                 'java_info'       : java_info,
+                 'info'            : info,
                  '_is_3g'          : True,
                  }
 
@@ -323,7 +323,7 @@ class SoftBankUserAgentParser(UserAgentParser):
         serialnumber = None
         vendor = None
         vendor_version = None
-        java_info = {}
+        info = {}
 
         if len(ua) > 1:
             # J-PHONE/4.0/J-SH51/SNJSHA3029293 SH/0001aa Profile/MIDP-1.0 Configuration/CLDC-1.0 Ext-Profile/JSCL-1.1.0
@@ -341,7 +341,7 @@ class SoftBankUserAgentParser(UserAgentParser):
             except ValueError, e:
                 pass
 
-            java_info.update([x.split('/') for x in ua[2:]])
+            info.update([x.split('/', 1) for x in ua[1:]])
         else:
             # J-PHONE/2.0/J-DN02
             packet_compliant = False
@@ -362,7 +362,7 @@ class SoftBankUserAgentParser(UserAgentParser):
                  'vendor'          : vendor,
                  'vendor_version'  : vendor_version,
                  'serialnumber'    : serialnumber,
-                 'java_info'       : java_info,
+                 'info'            : info,
                  '_is_3g'          : False,
                  }
 
@@ -374,13 +374,13 @@ class SoftBankUserAgentParser(UserAgentParser):
         name, vendor_version = ua[0].split('/')
         model = name[name.rindex('-')+1:]
 
-        java_info = dict([x.split('/') for x in ua[2:]])
+        info = dict([x.split('/', 1) for x in ua[1:]])
 
         return { 'packet_compliant': True,
                  'vendor'          : 'MOT',
                  'vendor_version'  : vendor_version,
                  'model'           : model,
-                 'java_info'       : java_info,
+                 'info'            : info,
                  '_is_3g'          : True,
                  }
 
