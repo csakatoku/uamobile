@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from pkg_resources import resource_string
 from IPy import IP
 
-from uamobile.cidrdata import crawler, docomo, ezweb, softbank, willcom
+from uamobile.data.cidr import crawler, docomo, ezweb, softbank, willcom
 
 __all__ = ['IP', 'get_ip_addrs', 'get_ip']
 
