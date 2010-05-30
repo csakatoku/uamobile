@@ -38,7 +38,7 @@ def test_crawler():
         # livedoor
         ('203.104.254.1', 'DoCoMo/1.0/N505i/c20/TB/W20H10 (compatible; LD_mobile_bot; +http://helpguide.livedoor.com/help/search/qa/grp627)'),
         # goo
-        ('210.150.10.32', 'DoCoMo/2.0 P900i(c100;TB;W24H11)(compatible; ichiro/mobile goo; +http://help.goo.ne.jp/door/crawler.html)'),
+        ('203.131.253.1', 'DoCoMo/2.0 P900i(c100;TB;W24H11)(compatible; ichiro/mobile goo; +http://help.goo.ne.jp/door/crawler.html)'),
         # baidu
         ('119.63.195.1', 'DoCoMo/2.0 P05A(c100;TB;W24H15) (compatible; BaiduMobaider/1.0; +http://www.baidu.jp/spider/)'),
         ('119.63.195.1', 'DoCoMo/1.0/D506i/c20/TB/W20H10 (compatible; BaiduMobaider/1.0; +http://www.baidu.jp/spider/)'),
@@ -49,7 +49,7 @@ def test_crawler():
         # livedoor
         ('203.104.254.1', 'KDDI-HI31 UP.Browser/6.2.0.5 (GUI) MMP/2.0 (compatible; LD_mobile_bot; +http://helpguide.livedoor.com/help/search/qa/grp627)'),
         # goo
-        ('210.150.10.32', 'KDDI-CA31 UP.Browser/6.2.0 (GUI) (compatible; ichiro/mobile goo; +http://help.goo.ne.jp/door/crawler.html)'),
+        ('203.131.253.1', 'KDDI-CA31 UP.Browser/6.2.0 (GUI) (compatible; ichiro/mobile goo; +http://help.goo.ne.jp/door/crawler.html)'),
         # froute
         ('60.43.36.253', 'KDDI-SH32 UP.Browser/6.2.0.6.2 (GUI) MMP/2.0 (symphonybot1.froute.jp; +http://search.froute.jp/howto/crawler.html)'),
         # baidu
@@ -61,7 +61,7 @@ def test_crawler():
         # livedoor
         ('203.104.254.1', 'J-PHONE/3.0/J-SH10 (compatible; LD_mobile_bot; +http://helpguide.livedoor.com/help/search/qa/grp627)'),
         # goo
-        ('210.150.10.32', 'Vodafone/1.0/V802SH/SHJ002 Browser/UP.Browser/7.0.2.1 (compatible; ichiro/mobile goo;+http://help.goo.ne.jp/door/crawler.html)'),
+        ('203.131.253.1', 'Vodafone/1.0/V802SH/SHJ002 Browser/UP.Browser/7.0.2.1 (compatible; ichiro/mobile goo;+http://help.goo.ne.jp/door/crawler.html)'),
         # froute
         ('60.43.36.253', 'SoftBank/1.0/913SH/SHJ001/SN000123456789000 Browser/NetFront/3.4 Profile/MIDP-2.0 (symphonybot1.froute.jp; +http://search.froute.jp/howto/crawler.html)'),
         # baidu
@@ -79,6 +79,7 @@ def test_not_crawler():
 
     for ip, ua in (
         ('66.249.70.39', 'DoCoMo/1.0/N505i/c20/TB/W20H10 (compatible; Googlebot-Mobile/2.1; +http://www.google.com/bot.html)'),
+        ('210.150.10.32', 'DoCoMo/2.0 P900i(c100;TB;W24H11)(compatible; ichiro/mobile goo; +http://help.goo.ne.jp/door/crawler.html)'),
         ):
         yield func, ip, ua
 
