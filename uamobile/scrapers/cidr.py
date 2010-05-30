@@ -5,7 +5,7 @@ class DoCoMoScraper(Scraper):
     url = 'http://www.nttdocomo.co.jp/service/imode/make/content/ip/'
 
     def do_scrape(self, doc):
-        return [x.text for x in doc.xpath('//div[@class="boxArea" and count(preceding-sibling::*)=2]/div/div[@class="section"]/ul[@class="normal txt" and position()=1]/li')]
+        return [str(x.text) for x in doc.xpath('//div[@class="boxArea" and count(preceding-sibling::*)=2]/div/div[@class="section"]/ul[@class="normal txt" and position()=1]/li')]
 
 
 class EZWebScraper(Scraper):
@@ -19,7 +19,7 @@ class EZWebScraper(Scraper):
             if len(cols) == 4:
                 # deprecated
                 continue
-            res.append('%s%s' % (cols[1], cols[2]))
+            res.append(str('%s%s' % (cols[1], cols[2])))
         return res
 
 
@@ -27,7 +27,7 @@ class SoftBankScraper(Scraper):
     url = 'http://creation.mb.softbank.jp/web/web_ip.html'
 
     def do_scrape(self, doc):
-        return [x.text.strip() for x in doc.xpath("//div[@class='contents']/table/tr[7]/td/table/tr/td/table/tr/td")]
+        return [str(x.text.strip()) for x in doc.xpath("//div[@class='contents']/table/tr[7]/td/table/tr/td/table/tr/td")]
 
 
 class WILLCOMScraper(Scraper):
@@ -45,5 +45,5 @@ class WILLCOMScraper(Scraper):
                 if td.attrib.get('align') == 'center' and td.attrib.get('bgcolor') == 'white':
                     txt = td[0].text
                     if txt:
-                        res.append(txt)
+                        res.append(str(txt))
         return res
