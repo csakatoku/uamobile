@@ -1,2 +1,5 @@
 *.pyc
 *~
+build
+dist
+uamobile.egg-info
