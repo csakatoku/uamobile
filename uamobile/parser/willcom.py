@@ -55,3 +55,16 @@ class WillcomUserAgentParser(UserAgentParser):
                      }
         except ValueError, e:
             return {}
+
+
+class CachingWillcomUserAgentParser(WillcomUserAgentParser):
+    def __init__(self):
+        self._cache = {}
+
+    def parse(self, useragent):
+        try:
+            return self._cache[useragent]
+        except KeyError:
+            result = super(CachingWillcomUserAgentParser, self).parse(useragent)
+            self._cache[useragent] = result
+            return result

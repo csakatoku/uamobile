@@ -129,3 +129,17 @@ class SoftBankUserAgentParser(UserAgentParser):
                  'info'            : info,
                  '_is_3g'          : True,
                  }
+
+
+class CachingSoftBankUserAgentParser(SoftBankUserAgentParser):
+    def __init__(self):
+        self._cache = {}
+
+    def parse(self, useragent):
+        try:
+            return self._cache[useragent]
+        except KeyError:
+            result = super(CachingSoftBankUserAgentParser, self).parse(useragent)
+            if result.get('serialnumber') is None:
+                self._cache[useragent] = result
+            return result

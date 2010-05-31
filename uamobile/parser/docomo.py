@@ -185,3 +185,17 @@ class DoCoMoUserAgentParser(UserAgentParser):
                 continue
 
         return params
+
+
+class CachingDoCoMoUserAgentParser(DoCoMoUserAgentParser):
+    def __init__(self):
+        self._cache = {}
+
+    def parse(self, useragent):
+        try:
+            return self._cache[useragent]
+        except KeyError:
+            result = super(CachingDoCoMoUserAgentParser, self).parse(useragent)
+            if result.get('ser') is None and result.get('icc') is None:
+                self._cache[useragent] = result
+            return result

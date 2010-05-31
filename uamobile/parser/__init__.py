@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from uamobile.parser.docomo import DoCoMoUserAgentParser
-from uamobile.parser.ezweb import EZwebUserAgentParser
-from uamobile.parser.softbank import SoftBankUserAgentParser
-from uamobile.parser.willcom import WillcomUserAgentParser
+from uamobile.parser.docomo import DoCoMoUserAgentParser, CachingDoCoMoUserAgentParser
+from uamobile.parser.ezweb import EZwebUserAgentParser, CachingEZwebUserAgentParser
+from uamobile.parser.softbank import SoftBankUserAgentParser, CachingSoftBankUserAgentParser
+from uamobile.parser.willcom import WillcomUserAgentParser, CachingWillcomUserAgentParser

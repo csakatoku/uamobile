@@ -58,3 +58,16 @@ class EZwebUserAgentParser(UserAgentParser):
                  'name'           : name,
                  'comment'        : comment,
                  }
+
+
+class CachingEZwebUserAgentParser(EZwebUserAgentParser):
+    def __init__(self):
+        self._cache = {}
+
+    def parse(self, useragent):
+        try:
+            return self._cache[useragent]
+        except KeyError:
+            result = super(CachingEZwebUserAgentParser, self).parse(useragent)
+            self._cache[useragent] = result
+            return result
