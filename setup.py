@@ -1,10 +1,18 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.3.0'
+INSTALL_REQUIRES = [
+    'IPy',
+    ]
+
+major, minor, micro, releaselevel, serial = sys.version_info
+if (major, minor) < (2, 7):
+    INSTALL_REQUIRES.append('importlib')
+
+VERSION = '0.3.0'
 
 setup(name='uamobile',
-      version=version,
+      version=VERSION,
       description="WSGIUserAgentMobile - mobile user agent string parser for WSGI applications",
       long_description="""\
 WSGIUserAgentMobile is HTTP mobile user agent string parser. It'll be useful in parsing HTTP_USER_AGENT strings of (mainly Japanese) mobile devices.
@@ -32,10 +40,7 @@ Topic :: Internet :: WWW/HTTP :: WSGI :: Middleware
       packages=find_packages(exclude=['examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
-      install_requires=[
-        'IPy',
-        'importlib',
-      ],
+      install_requires=INSTALL_REQUIRES,
       entry_points="""
       # -*- Entry points: -*-
       [console_scripts]
